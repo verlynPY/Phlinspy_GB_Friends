@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/bottomViewContainer"
+    android:background="@drawable/bg_window"
+    android:layout_width="match_parent"
+    android:orientation="vertical"
+    android:layout_height="360dp">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="30dp">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="8dp"
+            android:textAlignment="center"
+            android:text="@string/setting"
+            android:textSize="26sp"
+            android:textStyle="bold" />
+    </RelativeLayout>
+
+    <TableLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <TableRow>
+            <TextView
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:padding="8dp"
+                android:text="@string/gender"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                android:backgroundTint="#cccccc"
+                android:gravity="center"
+                android:layout_weight="1"
+                />
+            <RadioGroup
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/radiogroup"
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:layout_weight="1"
+                >
+                <RadioButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/Man"
+                    android:layout_marginRight="15dp"
+                    android:text="@string/man"
+                    android:textSize="24sp"
+                    android:textStyle="bold"
+                    android:button="@android:color/primary_text_dark"
+                    android:background="@drawable/bg_radio_selector"
+                    android:textColor="@drawable/bg_text_radio"
+                    android:paddingRight="15dp"
+                    android:paddingLeft="15dp"
+                    android:paddingTop="8dp"
+                    android:paddingBottom="8dp"
+                    android:elevation="4dp"
+                    />
+                <RadioButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/Women"
+                    android:layout_marginRight="20dp"
+                    android:text="@string/women"
+                    android:textSize="24sp"
+                    android:textStyle="bold"
+                    android:button="@android:color/secondary_text_light"
+                    android:background="@drawable/bg_radio_selector"
+                    android:textColor="@drawable/bg_text_radio"
+                    android:paddingRight="15dp"
+                    android:paddingLeft="15dp"
+                    android:paddingTop="8dp"
+                    android:paddingBottom="8dp"
+                    android:elevation="4dp"
+                    />
+            </RadioGroup>
+        </TableRow>
+        <TableRow>
+            <TextView
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:backgroundTint="#cccccc"
+                android:text="@string/distance"
+                android:padding="8dp"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                android:gravity="center"
+                android:layout_weight="1"
+                />
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:layout_weight="1"
+                >
+                <Button
+                    android:layout_width="45dp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/Distance_Down"
+                    android:background="@drawable/ic_down"
+                    android:backgroundTint="#cccccc"
+                    />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/Distance"
+                        android:layout_marginRight="10dp"
+                        android:layout_marginLeft="10dp"
+                        android:backgroundTint="#cccccc"
+                        android:textSize="22sp"
+                        android:text="1"
+                        android:textStyle="bold"
+
+                        />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="10dp"
+                        android:backgroundTint="#cccccc"
+                        android:textSize="22sp"
+                        android:text="KM"
+                        android:textStyle="bold"
+
+                        />
+
+                </LinearLayout>
+
+
+                <Button
+                    android:layout_width="45dp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/Distance_Up"
+                    android:background="@drawable/ic_up"
+                    android:backgroundTint="#cccccc"
+                    />
+
+            </LinearLayout>
+        </TableRow><TableRow>
+        <TextView
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:backgroundTint="#cccccc"
+            android:padding="8dp"
+            android:text="@string/age"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:layout_weight="1"
+            />
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_weight="1"
+            >
+            <Button
+                android:layout_width="45dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/Age_Down"
+                android:background="@drawable/ic_down"
+                android:backgroundTint="#cccccc"
+                />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/Age"
+                android:layout_marginRight="20dp"
+                android:layout_marginLeft="20dp"
+                android:backgroundTint="#cccccc"
+                android:textSize="22sp"
+                android:text="16"
+                android:textStyle="bold"
+
+                />
+
+            <Button
+                android:layout_width="45dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/Age_Up"
+                android:background="@drawable/ic_up"
+                android:backgroundTint="#cccccc"
+                />
+        </LinearLayout>
+    </TableRow>
+    </TableLayout>
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        >
+
+        <Button
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/buttonExplorel"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginStart="110dp"
+            android:layout_marginEnd="110dp"
+            android:background="@drawable/borderbutton"
+            android:text="Explorer"
+            android:textSize="18dp"
+            android:textStyle="bold"
+            android:textColor="#cccccc"
+            />
+    </RelativeLayout>
+
+
+
+
+
+
+</LinearLayout>

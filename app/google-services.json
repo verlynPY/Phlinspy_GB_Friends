@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "862508187612",
+    "project_id": "phlinspygbfriends",
+    "storage_bucket": "phlinspygbfriends.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:862508187612:android:90d57fff89caec01735919",
+        "android_client_info": {
+          "package_name": "com.example.testnav"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "862508187612-qm6mml2bcv4ksbact8eivk6d554tlrcp.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAXU5-f80s3f8vNNVaR1-7tD0fgYJWNYaQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "862508187612-qm6mml2bcv4ksbact8eivk6d554tlrcp.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
