@@ -209,10 +209,10 @@ class RegisterActivity : AppCompatActivity() {
                                                 "",
                                                 userName.value,
                                                 numberPhone.value.toLong(),
-                                                age.value.toInt(),
+                                                age.value.toLong(),
                                                 hobby.value,
                                                 gender,
-                                                latitud!!, longitud!!,
+                                                latitud!!.toString(), longitud!!.toString(),
                                                 email.value,
                                                 passWord.value
                                         )

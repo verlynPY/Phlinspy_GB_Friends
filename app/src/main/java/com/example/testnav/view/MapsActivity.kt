@@ -17,6 +17,7 @@ import com.google.android.gms.maps.model.MarkerOptions
 import com.example.testnav.databinding.ActivityMapsBinding
 import com.google.android.material.bottomsheet.BottomSheetDialog
 
+@Suppress("DEPRECATION")
 class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private lateinit var mMap: GoogleMap
@@ -34,6 +35,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             .findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
     }
+
+
 
     /**
      * Manipulates the map once available.

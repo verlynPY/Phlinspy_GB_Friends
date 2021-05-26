@@ -30,19 +30,19 @@ class GeofenceBroadcastReceiver : BroadcastReceiver() {
             Geofence.GEOFENCE_TRANSITION_ENTER -> {
                 Toast.makeText(context, "GEOFENCE_TRANSITION_ENTER", Toast.LENGTH_SHORT).show()
                 context?.let {
-                    //Show something
+                    Toast.makeText(context, "ENTER", Toast.LENGTH_SHORT).show()
                 }
             }
             Geofence.GEOFENCE_TRANSITION_DWELL -> {
                 Toast.makeText(context, "GEOFENCE_TRANSITION_DWELL", Toast.LENGTH_SHORT).show()
                 context?.let {
-                    //Show something
+                    Toast.makeText(context, "DWELL", Toast.LENGTH_SHORT).show()
                 }
             }
             Geofence.GEOFENCE_TRANSITION_EXIT -> {
                 Toast.makeText(context, "GEOFENCE_TRANSITION_EXIT", Toast.LENGTH_SHORT).show()
                 context?.let {
-                    //Show something
+                    Toast.makeText(context, "EXIT", Toast.LENGTH_SHORT).show()
                 }
             }
         }

@@ -4,11 +4,11 @@ data class User (
     val Id: String = "",
     val UserName: String = "",
     val NumberPhone: Long = 0,
-    val Age: Int = 0,
+    val Age: Long = 0,
     val Hobby: String = "",
     val Gender: String = "",
-    val Latitude: Double = 0.0,
-    val Longitude: Double = 0.0,
+    val Latitude: String = "",
+    val Longitude: String = "",
     val Email: String = "",
     val PassWord: String = ""
 )

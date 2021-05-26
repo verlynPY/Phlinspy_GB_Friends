@@ -8,7 +8,7 @@ import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.location.Geofence
 import com.google.android.gms.location.GeofenceStatusCodes
 import com.google.android.gms.location.GeofencingRequest
-import com.google.type.LatLng
+import com.google.android.gms.maps.model.LatLng
 
 class GeofenceHelper(context: Context?):  ContextWrapper(context){
 

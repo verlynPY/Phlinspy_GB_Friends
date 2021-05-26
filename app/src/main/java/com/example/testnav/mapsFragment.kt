@@ -3,6 +3,7 @@ package com.example.testnav
 import android.content.ContentValues.TAG
 import android.content.Intent
 import android.content.res.Resources
+import android.location.Location
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -14,7 +15,9 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
 import com.example.testnav.databinding.ActivityMapsBinding
+import com.example.testnav.model.User
 import com.example.testnav.viewmodel.MainViewModel
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -28,8 +31,10 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 private const val ARG_PARAM1 = "param1"
 private const val ARG_PARAM2 = "param2"
 
-class mapsFragment : Fragment(), OnMapReadyCallback {
+@Suppress("DEPRECATION")
+class mapsFragment : Fragment(), OnMapReadyCallback{
 
+    private var listUser: ArrayList<User> = ArrayList()
     lateinit var radioMan: RadioButton
     lateinit var radioWomen: RadioButton
     lateinit var Distance_Down: Button
@@ -68,10 +73,14 @@ class mapsFragment : Fragment(), OnMapReadyCallback {
 
     }
 
+
     override fun onCreateView(
             inflater: LayoutInflater, container: ViewGroup?,
             savedInstanceState: Bundle?
     ): View {
+
+
+
         val mview:View = inflater.inflate(R.layout.fragment_maps, container, false)
         var button = mview?.findViewById<FloatingActionButton>(R.id.radar)
         button!!.setOnClickListener { view ->
@@ -120,6 +129,8 @@ class mapsFragment : Fragment(), OnMapReadyCallback {
                     Toast.makeText(context, "Bien", Toast.LENGTH_SHORT).show()
                     gender = "Women"
                 }
+                val sydney = LatLng(18.8759618, -71.7046444)
+                viewModel.SetGeofences(view.context, "Nose", sydney, Distance_Longitud.toFloat())
             }
             bottomSheetDialog!!.setContentView(bottomView)
             bottomSheetDialog.show()
@@ -187,6 +198,8 @@ class mapsFragment : Fragment(), OnMapReadyCallback {
 
 
 
+
+
         try {
             // Customise the styling of the base map using a JSON object defined
             // in a raw resource file.
@@ -208,13 +221,53 @@ class mapsFragment : Fragment(), OnMapReadyCallback {
         )
 
         viewModel.ShowCircle(sydney, 1000F, p0)
-        p0.moveCamera(CameraUpdateFactory.newLatLng(sydney))
 
+        viewModel.GetUserInfo().observe(this, Observer { user ->
+            listUser.add(user)
+
+            val latLng = LatLng(user.Latitude.toDouble(), user.Longitude.toDouble())
+
+            var marker = MarkerOptions()
+                    .position(latLng)
+                    .title(user.UserName)
+                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.location_friends))
+
+
+            p0.addMarker(marker)
+
+            onClickMarker(p0, user)
+        })
+
+        p0.moveCamera(CameraUpdateFactory.newLatLng(sydney))
         var button = view?.findViewById<FloatingActionButton>(R.id.current_location)
         button!!.setOnClickListener { view ->
             p0.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney, 15f))
             p0.animateCamera(CameraUpdateFactory.zoomIn(), 2000, null)
         }
-
     }
+
+    fun onClickMarker(p0: GoogleMap, user: User){
+        p0.setOnMarkerClickListener(object: GoogleMap.OnMarkerClickListener {
+            override fun onMarkerClick(marker: Marker?): Boolean {
+
+                var test = marker!!.title
+
+
+
+                        var bottomSheetDialog = view?.let { BottomSheetDialog(it.context, R.style.BottomSheetDialogTheme) }
+                        var bottomView = LayoutInflater.from(context)
+                                .inflate(R.layout.window_bottom_preview, view?.findViewById(R.id.windows_previewContainer))
+                        var textName_Age = bottomView.findViewById<TextView>(R.id.textName_Age)
+                        textName_Age.text = test
+                        bottomSheetDialog!!.setContentView(bottomView)
+                        bottomSheetDialog.show()
+
+                    return true
+                }
+
+
+        })
+    }
+
+
 }

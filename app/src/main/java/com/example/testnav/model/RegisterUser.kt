@@ -23,15 +23,15 @@ class RegisterUser {
                     if(task.isSuccessful){
                         val User: FirebaseUser = auth.currentUser!!
                         val Id = User.uid
-                        val hashMap: HashMap<String, String> = HashMap()
+                        val hashMap: HashMap<String, Any> = HashMap()
                         hashMap.put("Id", Id)
                         hashMap.put("UserName", user.UserName.capitalize())
                         hashMap.put("NumberPhone", user.NumberPhone.toString())
                         hashMap.put("Age", user.Age.toString())
                         hashMap.put("Hobby", user.Hobby.capitalize())
                         hashMap.put("Gender", user.Gender)
-                        hashMap.put("Latitude", user.Latitude.toString())
-                        hashMap.put("Longitude", user.Longitude.toString())
+                        hashMap.put("Latitude", user.Latitude)
+                        hashMap.put("Longitude", user.Longitude)
                         hashMap.put("Email", user.Email)
                         hashMap.put("PassWord", user.PassWord)
 
