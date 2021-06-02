@@ -14,12 +14,14 @@ class GeofenceMaps {
         mMap.addMarker(markerOptions)
     }
 
+
     fun addCircle(latLng: LatLng, Radius: Float, mMap: GoogleMap){
         val circleOptions = CircleOptions()
         circleOptions.center(latLng)
         circleOptions.radius(Radius.toDouble())
-        circleOptions.fillColor(Color.argb(30, 204,0,255))
-        circleOptions.strokeWidth(4f)
+        //circleOptions.fillColor(Color.argb(30, 204,0,255))
+        circleOptions.strokeWidth(6f)
+        circleOptions.strokeColor(Color.argb(100,255,193,7))
         mMap.addCircle(circleOptions)
     }
 

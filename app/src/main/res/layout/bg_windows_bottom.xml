@@ -10,14 +10,16 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="30dp">
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
             android:layout_alignParentEnd="true"
             android:layout_marginTop="8dp"
-            android:textAlignment="center"
+            android:textColor="@color/text_color"
             android:text="@string/setting"
+            android:textAlignment="center"
             android:textSize="26sp"
             android:textStyle="bold" />
     </RelativeLayout>
@@ -33,7 +35,7 @@
                 android:text="@string/gender"
                 android:textSize="24sp"
                 android:textStyle="bold"
-                android:backgroundTint="#cccccc"
+                android:textColor="@color/text_color"
                 android:gravity="center"
                 android:layout_weight="1"
                 />
@@ -85,10 +87,10 @@
             <TextView
                 android:layout_height="wrap_content"
                 android:layout_width="wrap_content"
-                android:backgroundTint="#cccccc"
                 android:text="@string/distance"
                 android:padding="8dp"
                 android:textSize="24sp"
+                android:textColor="@color/text_color"
                 android:textStyle="bold"
                 android:gravity="center"
                 android:layout_weight="1"
@@ -105,7 +107,7 @@
                     android:layout_height="wrap_content"
                     android:id="@+id/Distance_Down"
                     android:background="@drawable/ic_down"
-                    android:backgroundTint="#cccccc"
+                    android:backgroundTint="@color/teal_700"
                     />
 
                 <LinearLayout
@@ -119,7 +121,7 @@
                         android:id="@+id/Distance"
                         android:layout_marginRight="10dp"
                         android:layout_marginLeft="10dp"
-                        android:backgroundTint="#cccccc"
+                        android:textColor="@color/text_color"
                         android:textSize="22sp"
                         android:text="1"
                         android:textStyle="bold"
@@ -129,7 +131,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginRight="10dp"
-                        android:backgroundTint="#cccccc"
+                        android:textColor="@color/text_color"
                         android:textSize="22sp"
                         android:text="KM"
                         android:textStyle="bold"
@@ -144,7 +146,7 @@
                     android:layout_height="wrap_content"
                     android:id="@+id/Distance_Up"
                     android:background="@drawable/ic_up"
-                    android:backgroundTint="#cccccc"
+                    android:backgroundTint="@color/teal_700"
                     />
 
             </LinearLayout>
@@ -152,10 +154,10 @@
         <TextView
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
-            android:backgroundTint="#cccccc"
             android:padding="8dp"
             android:text="@string/age"
             android:textSize="24sp"
+            android:textColor="@color/text_color"
             android:textStyle="bold"
             android:gravity="center"
             android:layout_weight="1"
@@ -172,7 +174,7 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/Age_Down"
                 android:background="@drawable/ic_down"
-                android:backgroundTint="#cccccc"
+                android:backgroundTint="@color/teal_700"
                 />
 
             <TextView
@@ -181,7 +183,7 @@
                 android:id="@+id/Age"
                 android:layout_marginRight="20dp"
                 android:layout_marginLeft="20dp"
-                android:backgroundTint="#cccccc"
+                android:textColor="@color/text_color"
                 android:textSize="22sp"
                 android:text="16"
                 android:textStyle="bold"
@@ -193,7 +195,7 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/Age_Up"
                 android:background="@drawable/ic_up"
-                android:backgroundTint="#cccccc"
+                android:backgroundTint="@color/teal_700"
                 />
         </LinearLayout>
     </TableRow>
@@ -207,19 +209,20 @@
         >
 
         <Button
-            android:layout_width="200dp"
-            android:layout_height="wrap_content"
             android:id="@+id/buttonExplorel"
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
             android:layout_alignParentStart="true"
             android:layout_alignParentEnd="true"
-            android:layout_marginStart="110dp"
-            android:layout_marginEnd="110dp"
+            android:layout_marginStart="60dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="60dp"
+            android:layout_marginBottom="15dp"
             android:background="@drawable/borderbutton"
             android:text="Explorer"
+            android:textColor="@color/teal_700"
             android:textSize="18dp"
-            android:textStyle="bold"
-            android:textColor="#cccccc"
-            />
+            android:textStyle="bold" />
     </RelativeLayout>
 
 

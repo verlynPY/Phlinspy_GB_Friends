@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -24,16 +25,17 @@ import com.example.testnav.R
     fun Profile(){
 
         Column(modifier = Modifier.fillMaxSize()){
-            var imageDefault = R.drawable.profile
-
-            Image(
+            val imageDefault = R.drawable.profile
+            Row(modifier = Modifier.fillMaxWidth().padding(30.dp), horizontalArrangement = Arrangement.Center) {
+                Image(
                     imageResource(imageDefault),
                     modifier = Modifier
-                            .preferredWidth(180.dp)
-                            .preferredHeight(180.dp),
-                            //.clip(CircleShape),
-                    Alignment.TopStart
-            )
+                        .preferredWidth(180.dp)
+                        .preferredHeight(180.dp),
+                    //.clip(CircleShape),
+                    Alignment.Center
+                )
+            }
 
             Column(
                 modifier = Modifier.fillMaxHeight().fillMaxWidth(),
@@ -46,7 +48,8 @@ import com.example.testnav.R
                     IconButton(onClick = { }) {
                         Icon(
                             vectorResource(R.drawable.ic_edit),
-                            modifier = Modifier.absolutePadding(bottom = 10.dp)
+                            modifier = Modifier.absolutePadding(bottom = 10.dp),
+                            tint = MaterialTheme.colors.primary
                         )
                     }
                 }
@@ -55,7 +58,8 @@ import com.example.testnav.R
                     IconButton(onClick = { }) {
                         Icon(
                             vectorResource(R.drawable.ic_edit),
-                            modifier = Modifier.absolutePadding(bottom = 10.dp)
+                            modifier = Modifier.absolutePadding(bottom = 10.dp),
+                            tint = MaterialTheme.colors.primary
                         )
                     }
                 }

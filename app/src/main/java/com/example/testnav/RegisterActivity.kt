@@ -39,6 +39,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.FragmentManager
 import com.example.testnav.model.RegisterUser
 import com.example.testnav.model.User
 import com.example.testnav.viewmodel.MainViewModel
@@ -220,7 +221,7 @@ class RegisterActivity : AppCompatActivity() {
                                         viewModel.SaveUsers(user)
                                     }
 
-                                }, modifier = Modifier
+                                }, colors = ButtonConstants.defaultButtonColors(backgroundColor = MaterialTheme.colors.primary), modifier = Modifier
                                 .fillMaxWidth()
                                 .preferredHeight(55.dp)
                                 .clip(

@@ -37,7 +37,7 @@ class SettingFragment : Fragment() {
         // Inflate the layout for this fragment
         return ComposeView(requireContext()).apply {
             setContent {
-                Profile()
+
             }
         }
     }

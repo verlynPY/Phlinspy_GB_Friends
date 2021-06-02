@@ -2,8 +2,9 @@ package com.example.testnav
 
 import android.content.ContentValues.TAG
 import android.content.Intent
+import android.content.res.Configuration
 import android.content.res.Resources
-import android.location.Location
+import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -13,11 +14,13 @@ import android.widget.Button
 import android.widget.RadioButton
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import com.example.testnav.databinding.ActivityMapsBinding
 import com.example.testnav.model.User
+import com.example.testnav.view.ManagerDialog
 import com.example.testnav.viewmodel.MainViewModel
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -26,6 +29,9 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.model.*
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
+import com.google.gson.Gson
 
 
 private const val ARG_PARAM1 = "param1"
@@ -35,42 +41,30 @@ private const val ARG_PARAM2 = "param2"
 class mapsFragment : Fragment(), OnMapReadyCallback{
 
     private var listUser: ArrayList<User> = ArrayList()
-    lateinit var radioMan: RadioButton
-    lateinit var radioWomen: RadioButton
-    lateinit var Distance_Down: Button
-    lateinit var Distance_Up: Button
-    lateinit var Age_Down: Button
-    lateinit var Age_Up: Button
-    lateinit var Distance: TextView
-    lateinit var Age: TextView
+    private lateinit var radioMan: RadioButton
+    private lateinit var radioWomen: RadioButton
+    private lateinit var Distance_Down: Button
+    private lateinit var Distance_Up: Button
+    private lateinit var Age_Down: Button
+    private lateinit var Age_Up: Button
+    private lateinit var Distance: TextView
+    private lateinit var Age: TextView
+    private var MDialog = ManagerDialog()
+    private lateinit var auth: FirebaseAuth
     private lateinit var mMap: GoogleMap
     private lateinit var mapView: MapView
     private lateinit var binding: ActivityMapsBinding
     private var param1: String? = null
     private var param2: String? = null
     private val viewModel: MainViewModel by viewModels()
+    var gson = Gson()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-
-
         arguments?.let {
             param1 = it.getString(ARG_PARAM1)
             param2 = it.getString(ARG_PARAM2)
-
         }
-
-
-
-
-
-        /*val supportMapFragment: SupportMapFragment =
-            childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
-        supportMapFragment.getMapAsync(this)*/
-
-
-
     }
 
 
@@ -79,20 +73,14 @@ class mapsFragment : Fragment(), OnMapReadyCallback{
             savedInstanceState: Bundle?
     ): View {
 
-
-
         val mview:View = inflater.inflate(R.layout.fragment_maps, container, false)
         var button = mview?.findViewById<FloatingActionButton>(R.id.radar)
         button!!.setOnClickListener { view ->
+
             var bottomSheetDialog = BottomSheetDialog(view.context, R.style.BottomSheetDialogTheme)
             var bottomView = LayoutInflater.from(context)
                     .inflate(R.layout.bg_windows_bottom, view.findViewById(R.id.bottomViewContainer))
-            Distance_Down = bottomView.findViewById(R.id.Distance_Down)
-            Distance_Up = bottomView.findViewById(R.id.Distance_Up)
-            Age_Down = bottomView.findViewById(R.id.Age_Down)
-            Age_Up = bottomView.findViewById(R.id.Age_Up)
-            Distance = bottomView.findViewById(R.id.Distance)
-            Age = bottomView.findViewById(R.id.Age)
+            Initialize(bottomView)
             var Distance_Longitud:Int = 1
             Distance.text = Distance_Longitud.toString()
             var Longitud:Int = Distance.text.toString().toInt()
@@ -134,37 +122,19 @@ class mapsFragment : Fragment(), OnMapReadyCallback{
             }
             bottomSheetDialog!!.setContentView(bottomView)
             bottomSheetDialog.show()
-
-
         }
-
-
-
         return mview
-
-        /*val gender = arguments!!.getString("gender", "any")
-        if(gender != "any"){
-            Toast.makeText(context, "$gender", Toast.LENGTH_SHORT).show()
-        }*/
-
-
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         mapView = view.findViewById(R.id.map)
         if(mapView != null){
             mapView.onCreate(null)
             mapView.onResume()
             mapView.getMapAsync(this)
         }
-
-
-
     }
-
-
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
@@ -194,21 +164,32 @@ class mapsFragment : Fragment(), OnMapReadyCallback{
        // p0!!.setMinZoomPreference(14.0f)
         p0!!.setMaxZoomPreference(30.0F)
 
-
-
-
-
-
-
         try {
-            // Customise the styling of the base map using a JSON object defined
-            // in a raw resource file.
-            val success: Boolean = p0!!.setMapStyle(
-                    MapStyleOptions.loadRawResourceStyle(
-                            context, R.raw.style_json))
-            if (!success) {
-                Log.e(TAG, "Style parsing failed.")
+
+            when (getResources().getConfiguration().uiMode and Configuration.UI_MODE_NIGHT_MASK){
+                Configuration.UI_MODE_NIGHT_YES -> {
+                    val success: Boolean = p0.setMapStyle(
+                        MapStyleOptions.loadRawResourceStyle(
+                            context, R.raw.style_json_dark))
+                    if (!success) {
+                        Log.e(TAG, "Style parsing failed.")
+                    }
+                }
+                Configuration.UI_MODE_NIGHT_NO -> {
+                    val success: Boolean = p0.setMapStyle(
+                        MapStyleOptions.loadRawResourceStyle(
+                            context, R.raw.style_json_ligth))
+                    if (!success) {
+                        Log.e(TAG, "Style parsing failed.")
+                    }
+                }
             }
+
+
+
+
+
+
         } catch (e: Resources.NotFoundException) {
             Log.e(TAG, "Can't find style. Error: ", e)
         }
@@ -216,9 +197,14 @@ class mapsFragment : Fragment(), OnMapReadyCallback{
         p0!!.addMarker(
                 MarkerOptions()
                         .position(sydney)
-                        .title("Marker in Sydney")
-                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.location))
+                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.circle))
         )
+        val cOptions = CircleOptions()
+        cOptions.center(sydney)
+        cOptions.radius(80.0)
+        cOptions.fillColor(Color.argb(30, 100,0,150))
+        cOptions.strokeWidth(6f)
+        cOptions.strokeColor(Color.argb(30, 100,0,150))
 
         viewModel.ShowCircle(sydney, 1000F, p0)
 
@@ -226,14 +212,16 @@ class mapsFragment : Fragment(), OnMapReadyCallback{
             listUser.add(user)
 
             val latLng = LatLng(user.Latitude.toDouble(), user.Longitude.toDouble())
+            var jsonString = gson.toJson(user)
 
             var marker = MarkerOptions()
                     .position(latLng)
-                    .title(user.UserName)
-                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.location_friends))
+                    .title(jsonString)
+                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.locations_friends))
 
 
             p0.addMarker(marker)
+            //p0.addCircle(cOptions)
 
             onClickMarker(p0, user)
         })
@@ -249,24 +237,47 @@ class mapsFragment : Fragment(), OnMapReadyCallback{
     fun onClickMarker(p0: GoogleMap, user: User){
         p0.setOnMarkerClickListener(object: GoogleMap.OnMarkerClickListener {
             override fun onMarkerClick(marker: Marker?): Boolean {
+                val test = marker!!.title
+                auth = FirebaseAuth.getInstance()
+                val currentId: FirebaseUser = auth.currentUser!!
+                val user = gson.fromJson(test, User::class.java)
+                view?.let {
+                    context?.let { it1 ->
+                        MDialog.DialogProfilePreview(it1, gson, marker, it,
+                            { viewModel.SendMessageRequest(currentId.uid, user) })
 
-                var test = marker!!.title
 
+                    }
+                }
 
+                /*val test = marker!!.title
 
                         var bottomSheetDialog = view?.let { BottomSheetDialog(it.context, R.style.BottomSheetDialogTheme) }
                         var bottomView = LayoutInflater.from(context)
                                 .inflate(R.layout.window_bottom_preview, view?.findViewById(R.id.windows_previewContainer))
                         var textName_Age = bottomView.findViewById<TextView>(R.id.textName_Age)
-                        textName_Age.text = test
+                        textName_Age.text = user.UserName
+                        var bottomSendRequests = bottomView.findViewById<Button>(R.id.buttonRequest)
+                        bottomSendRequests.setOnClickListener {
+                            viewModel.SendMessageRequest(currentId.uid, user)
+                        }
                         bottomSheetDialog!!.setContentView(bottomView)
-                        bottomSheetDialog.show()
+                        bottomSheetDialog.show()*/
 
                     return true
                 }
 
 
         })
+    }
+
+    private fun Initialize(bottomView: View){
+        Distance_Down = bottomView.findViewById(R.id.Distance_Down)
+        Distance_Up = bottomView.findViewById(R.id.Distance_Up)
+        Age_Down = bottomView.findViewById(R.id.Age_Down)
+        Age_Up = bottomView.findViewById(R.id.Age_Up)
+        Distance = bottomView.findViewById(R.id.Distance)
+        Age = bottomView.findViewById(R.id.Age)
     }
 
 

@@ -1,5 +1,7 @@
 package com.example.testnav
 
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.Image
@@ -24,6 +26,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.testnav.ui.theme.TestNavTheme
+import com.example.testnav.view.MainActivity
+import com.example.testnav.view.MapsActivity
 
 
 class LoginActivity : AppCompatActivity() {
@@ -33,7 +37,7 @@ class LoginActivity : AppCompatActivity() {
             MaterialTheme(colors = if (isSystemInDarkTheme())
                 MaterialThemee.darkColor else MaterialThemee.lightColor) {
                 Surface(color = Color(0,0,0)) {
-                    Login()
+                    Login(this)
                 }
 
             }
@@ -41,9 +45,9 @@ class LoginActivity : AppCompatActivity() {
     }
 }
 
-    @Preview
+    //@Preview
     @Composable
-    fun Login(){
+    fun Login(context: Context){
 
         Column(){
 
@@ -93,23 +97,26 @@ class LoginActivity : AppCompatActivity() {
                                 placeholder = { Text(text = "PassWord") }
 
                         )
+
                         Spacer(modifier = Modifier.height(30.dp))
-                        Button(onClick = { }, modifier = Modifier
+                        Button(onClick = {
+                            val intent = Intent(context, MainActivity::class.java)
+                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                            context.startActivity(intent)
+
+                        },colors = ButtonConstants.defaultButtonColors(backgroundColor = MaterialTheme.colors.primary),  modifier = Modifier
                                 .fillMaxWidth()
                                 .preferredHeight(55.dp)
                                 .clip(RoundedCornerShape(topLeft = 25.dp, bottomLeft = 25.dp,
                                         bottomRight = 30.dp))) {
-                            Text(text = "SingIn", fontSize = 18.sp, fontWeight = FontWeight.Bold)
+                            Text(text = "SingIn", fontSize = 22.sp, fontWeight = FontWeight.ExtraBold)
                         }
                         Column(modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.Bottom, horizontalAlignment = Alignment.CenterHorizontally) {
                             Text(text = "Don't have any account?, Sing Up", fontWeight = FontWeight.Bold)
                         }
-
-
                     }
                 }
             }
-
         }
     }
 

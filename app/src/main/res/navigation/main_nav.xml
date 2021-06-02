@@ -12,6 +12,11 @@
         android:label="fragment_maps"
         tools:layout="@layout/fragment_maps" />
     <fragment
+        android:id="@+id/chatFragment"
+        android:name="com.example.testnav.ChatFragment"
+        android:label="fragment_chat"
+        tools:layout="@layout/fragment_chat" />
+    <fragment
         android:id="@+id/friendsFragment"
         android:name="com.example.testnav.FriendsFragment"
         android:label="fragment_friends"
@@ -21,4 +26,5 @@
         android:name="com.example.testnav.SettingFragment"
         android:label="fragment_friends"
         tools:layout="@layout/fragment_friends" />
+
 </navigation>

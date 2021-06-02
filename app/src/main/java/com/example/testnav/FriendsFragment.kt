@@ -6,8 +6,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
+import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.ConstraintLayout
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
+import com.example.testnav.view.Profile
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -37,11 +43,18 @@ class FriendsFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        //return inflater.inflate(R.layout.fragment_friends, container, false)
+
         return ComposeView(requireContext()).apply {
             setContent {
-                Text(text = "Hello worldddddddd.")
+                MaterialTheme(
+                    colors = if (isSystemInDarkTheme())
+                        MaterialThemee.darkColor else MaterialThemee.lightColor
+                ) {
+                    ConstraintLayout(modifier = Modifier.background(MaterialTheme.colors.onBackground)) {
+                        Profile()
+                    }
+                }
+
             }
         }
     }
