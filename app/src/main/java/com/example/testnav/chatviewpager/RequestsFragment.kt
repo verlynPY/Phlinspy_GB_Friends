@@ -58,21 +58,19 @@ class RequestsFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-
+    ): View {
         return ComposeView(requireContext()).apply {
-            var auth = FirebaseAuth.getInstance()
-            var user: FirebaseUser = auth.currentUser!!
-            //viewModel.ReceivedMessageRequest(user.uid).observe(viewLifecycleOwner, Observer { user ->
-
+            val auth = FirebaseAuth.getInstance()
+            //val user: FirebaseUser = auth.currentUser!!
             setContent {
                 MaterialTheme(
                     colors = if (isSystemInDarkTheme())
                         MaterialThemee.darkColor else MaterialThemee.lightColor
                 ) {
                     val ListUser = ArrayList<User>()
-                    var Active = remember { mutableStateOf(false) }
-                    viewModel.EmitReceivedRequest(user.uid).observe(viewLifecycleOwner, Observer {
+                    val Active = remember { mutableStateOf(false) }
+                    viewModel.EmitReceivedRequest("oxGvYueyE4hflxgkEJEH9YBuLFf1").observe(viewLifecycleOwner, Observer {
+
                         ListUser.clear()
                         for (i in it) {
                             ListUser.add(i)
@@ -80,11 +78,9 @@ class RequestsFragment : Fragment() {
                                 Active.value = true
                             }
                         }
-
-
                     })
-                    ConstraintLayout(modifier = Modifier.background(MaterialTheme.colors.onBackground)) {
 
+                    ConstraintLayout(modifier = Modifier.background(MaterialTheme.colors.onBackground)) {
                         when (Active.value) {
                             true -> {
                                 ShowRequests(list = ListUser, context = context)
@@ -93,12 +89,8 @@ class RequestsFragment : Fragment() {
                                 CircularIndicator()
                             }
                         }
-
-
                     }
-
                 }
-                //})
             }
         }
     }

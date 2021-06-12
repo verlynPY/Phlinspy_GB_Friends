@@ -1,10 +1,15 @@
 package com.example.testnav.view
 
+import android.Manifest
+import android.content.ContentValues
+import android.content.pm.PackageManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.*
+import androidx.core.content.ContextCompat
 import androidx.navigation.findNavController
 import androidx.navigation.ui.setupWithNavController
 import com.example.testnav.R
@@ -23,6 +28,7 @@ class MainActivity : AppCompatActivity() {
     lateinit var Age_Up: Button
     lateinit var Distance: TextView
     lateinit var Age: TextView
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)

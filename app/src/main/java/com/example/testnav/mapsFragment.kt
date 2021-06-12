@@ -5,6 +5,7 @@ import android.content.Intent
 import android.content.res.Configuration
 import android.content.res.Resources
 import android.graphics.Color
+import android.location.Location
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -14,7 +15,6 @@ import android.widget.Button
 import android.widget.RadioButton
 import android.widget.TextView
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
@@ -22,6 +22,7 @@ import com.example.testnav.databinding.ActivityMapsBinding
 import com.example.testnav.model.User
 import com.example.testnav.view.ManagerDialog
 import com.example.testnav.viewmodel.MainViewModel
+import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapView
@@ -30,7 +31,6 @@ import com.google.android.gms.maps.model.*
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
 import com.google.gson.Gson
 
 
@@ -73,9 +73,11 @@ class mapsFragment : Fragment(), OnMapReadyCallback{
             savedInstanceState: Bundle?
     ): View {
 
+
         val mview:View = inflater.inflate(R.layout.fragment_maps, container, false)
         var button = mview?.findViewById<FloatingActionButton>(R.id.radar)
         button!!.setOnClickListener { view ->
+
 
             var bottomSheetDialog = BottomSheetDialog(view.context, R.style.BottomSheetDialogTheme)
             var bottomView = LayoutInflater.from(context)
@@ -86,23 +88,31 @@ class mapsFragment : Fragment(), OnMapReadyCallback{
             var Longitud:Int = Distance.text.toString().toInt()
 
             Distance_Up.setOnClickListener {
-                Distance_Longitud+= 1
-                Distance.text = Distance_Longitud.toString()
+                if(Distance_Longitud < 20){
+                    Distance_Longitud+= 1
+                    Distance.text = Distance_Longitud.toString()
+                }
             }
             Distance_Down.setOnClickListener {
-                Distance_Longitud-= 1
-                Distance.text = Distance_Longitud.toString()
+                if(Distance_Longitud > 1){
+                    Distance_Longitud-= 1
+                    Distance.text = Distance_Longitud.toString()
+                }
             }
 
             var Age_Years: Int = 16
             Age.text = Age_Years.toString()
             Age_Up.setOnClickListener {
-                Age_Years+=1
-                Age.text = Age_Years.toString()
+                if(Age_Years < 55){
+                    Age_Years+=1
+                    Age.text = Age_Years.toString()
+                }
             }
             Age_Down.setOnClickListener {
-                Age_Years-=1
-                Age.text = Age_Years.toString()
+                if(Age_Years > 16){
+                    Age_Years-=1
+                    Age.text = Age_Years.toString()
+                }
             }
             bottomView.findViewById<Button>(R.id.buttonExplorel)!!.setOnClickListener {
 
@@ -118,9 +128,8 @@ class mapsFragment : Fragment(), OnMapReadyCallback{
                     gender = "Women"
                 }
                 val sydney = LatLng(18.8759618, -71.7046444)
-                viewModel.SetGeofences(view.context, "Nose", sydney, Distance_Longitud.toFloat())
             }
-            bottomSheetDialog!!.setContentView(bottomView)
+            bottomSheetDialog.setContentView(bottomView)
             bottomSheetDialog.show()
         }
         return mview
@@ -141,15 +150,8 @@ class mapsFragment : Fragment(), OnMapReadyCallback{
     }
 
     companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment mapsFragment.
-         */
-        // TODO: Rename and change types and number of parameters
+
+
         @JvmStatic
         fun newInstance(param1: String, param2: String) =
             mapsFragment().apply {
@@ -159,6 +161,7 @@ class mapsFragment : Fragment(), OnMapReadyCallback{
                 }
             }
     }
+
 
     override fun onMapReady(p0: GoogleMap?) {
        // p0!!.setMinZoomPreference(14.0f)
@@ -184,91 +187,107 @@ class mapsFragment : Fragment(), OnMapReadyCallback{
                     }
                 }
             }
-
-
-
-
-
-
         } catch (e: Resources.NotFoundException) {
             Log.e(TAG, "Can't find style. Error: ", e)
         }
-        val sydney = LatLng(18.8759618, -71.7046444)
-        p0!!.addMarker(
-                MarkerOptions()
-                        .position(sydney)
-                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.circle))
-        )
-        val cOptions = CircleOptions()
-        cOptions.center(sydney)
-        cOptions.radius(80.0)
-        cOptions.fillColor(Color.argb(30, 100,0,150))
-        cOptions.strokeWidth(6f)
-        cOptions.strokeColor(Color.argb(30, 100,0,150))
+        //val location = getLocation(context)
+        val fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
+        var sydney = LatLng(18.8759618, -71.7046444)
+        fusedLocationClient.lastLocation
+            .addOnSuccessListener { location: Location? ->
+                try {
+                    sydney = LatLng(location!!.latitude, location.longitude)
+                    p0.addMarker(
+                        MarkerOptions()
+                            .position(sydney)
+                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.circle))
+                    )
+                    viewModel.ShowCircle(sydney, 50F, p0, true)
+                    viewModel.ShowCircle(sydney, 500F, p0, false)
+                }
+                catch(e: Exception){
+                    Log.e(TAG, "Location Error: $e")
+                }
 
-        viewModel.ShowCircle(sydney, 1000F, p0)
+            }
+
+        val cOptions = CircleOptions().let {
+            it.center(sydney)
+            it.radius(80.0)
+            it.fillColor(Color.argb(30, 100,0,150))
+            it.strokeWidth(6f)
+            it.strokeColor(Color.argb(30, 100,0,150))
+        }
+
 
         viewModel.GetUserInfo().observe(this, Observer { user ->
             listUser.add(user)
 
             val latLng = LatLng(user.Latitude.toDouble(), user.Longitude.toDouble())
-            var jsonString = gson.toJson(user)
+            val jsonString = gson.toJson(user)
 
-            var marker = MarkerOptions()
+            val marker = MarkerOptions()
                     .position(latLng)
                     .title(jsonString)
                     .icon(BitmapDescriptorFactory.fromResource(R.drawable.locations_friends))
 
+            /*val currentlocation = Location("current")
+            currentlocation.latitude = sydney.latitude
+            currentlocation.longitude = sydney.longitude
+
+            val userlocation = Location("user")
+            userlocation.latitude = user.Latitude.toDouble()
+            userlocation.longitude = user.Longitude.toDouble()
+
+            val distance = currentlocation.distanceTo(userlocation)
+            println("Distanceeeeeeee $distance")*/
+
 
             p0.addMarker(marker)
             //p0.addCircle(cOptions)
-
             onClickMarker(p0, user)
         })
 
         p0.moveCamera(CameraUpdateFactory.newLatLng(sydney))
-        var button = view?.findViewById<FloatingActionButton>(R.id.current_location)
+        val button = view?.findViewById<FloatingActionButton>(R.id.current_location)
         button!!.setOnClickListener { view ->
             p0.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney, 15f))
             p0.animateCamera(CameraUpdateFactory.zoomIn(), 2000, null)
         }
     }
 
-    fun onClickMarker(p0: GoogleMap, user: User){
-        p0.setOnMarkerClickListener(object: GoogleMap.OnMarkerClickListener {
-            override fun onMarkerClick(marker: Marker?): Boolean {
-                val test = marker!!.title
-                auth = FirebaseAuth.getInstance()
-                val currentId: FirebaseUser = auth.currentUser!!
-                val user = gson.fromJson(test, User::class.java)
-                view?.let {
-                    context?.let { it1 ->
-                        MDialog.DialogProfilePreview(it1, gson, marker, it,
-                            { viewModel.SendMessageRequest(currentId.uid, user) })
+    private fun onClickMarker(p0: GoogleMap, user: User){
+        p0.setOnMarkerClickListener { marker ->
+            val test = marker!!.title
+            auth = FirebaseAuth.getInstance()
+            //val currentId: FirebaseUser = auth.currentUser!!
+
+            val user = gson.fromJson(test, User::class.java)
+            view?.let {
+                context?.let { it1 ->
+                    MDialog.DialogProfilePreview(it1, gson, marker, it,
+                        { viewModel.SendMessageRequest("oxGvYueyE4hflxgkEJEH9YBuLFf1", user, it1, it) })
 
 
-                    }
                 }
+            }
 
-                /*val test = marker!!.title
+            /*val test = marker!!.title
 
-                        var bottomSheetDialog = view?.let { BottomSheetDialog(it.context, R.style.BottomSheetDialogTheme) }
-                        var bottomView = LayoutInflater.from(context)
-                                .inflate(R.layout.window_bottom_preview, view?.findViewById(R.id.windows_previewContainer))
-                        var textName_Age = bottomView.findViewById<TextView>(R.id.textName_Age)
-                        textName_Age.text = user.UserName
-                        var bottomSendRequests = bottomView.findViewById<Button>(R.id.buttonRequest)
-                        bottomSendRequests.setOnClickListener {
-                            viewModel.SendMessageRequest(currentId.uid, user)
-                        }
-                        bottomSheetDialog!!.setContentView(bottomView)
-                        bottomSheetDialog.show()*/
+                            var bottomSheetDialog = view?.let { BottomSheetDialog(it.context, R.style.BottomSheetDialogTheme) }
+                            var bottomView = LayoutInflater.from(context)
+                                    .inflate(R.layout.window_bottom_preview, view?.findViewById(R.id.windows_previewContainer))
+                            var textName_Age = bottomView.findViewById<TextView>(R.id.textName_Age)
+                            textName_Age.text = user.UserName
+                            var bottomSendRequests = bottomView.findViewById<Button>(R.id.buttonRequest)
+                            bottomSendRequests.setOnClickListener {
+                                viewModel.SendMessageRequest(currentId.uid, user)
+                            }
+                            bottomSheetDialog!!.setContentView(bottomView)
+                            bottomSheetDialog.show()*/
 
-                    return true
-                }
-
-
-        })
+            true
+        }
     }
 
     private fun Initialize(bottomView: View){

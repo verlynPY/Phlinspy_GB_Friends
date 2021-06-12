@@ -25,4 +25,14 @@ class GeofenceMaps {
         mMap.addCircle(circleOptions)
     }
 
+    fun addCircleShadow(latLng: LatLng, Radius: Float, mMap: GoogleMap){
+        val circleOptions = CircleOptions()
+        circleOptions.center(latLng)
+        circleOptions.radius(Radius.toDouble())
+        circleOptions.fillColor(Color.argb(30,255,193,7))
+        circleOptions.strokeWidth(1f)
+        circleOptions.strokeColor(Color.argb(10,255,193,7))
+        mMap.addCircle(circleOptions)
+    }
+
 }

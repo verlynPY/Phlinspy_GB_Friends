@@ -2,19 +2,19 @@ package com.example.testnav.viewmodel
 
 import android.content.ContentValues.TAG
 import android.content.Context
+import android.location.Location
 import android.util.Log
+import android.view.View
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.testnav.model.FirebaseData
+import com.example.testnav.model.*
 import com.example.testnav.model.Geofences.GeofenceHelper
 import com.example.testnav.model.Geofences.GeofenceMaps
-import com.example.testnav.model.MessageRequest
-import com.example.testnav.model.RegisterUser
-import com.example.testnav.model.User
+import com.example.testnav.model.ManagerLocation.getLocation
 import com.google.android.gms.location.Geofence
 import com.google.android.gms.location.GeofencingClient
 import com.google.android.gms.location.LocationServices
@@ -41,6 +41,9 @@ class MainViewModel: ViewModel() {
     val emailError =  mutableStateOf(false)
 
 
+
+
+
     fun SaveUsers(user: User){
         registerUser = RegisterUser()
 
@@ -61,10 +64,10 @@ class MainViewModel: ViewModel() {
         }
     }
 
-    fun SendMessageRequest(currentUser: String, user: User){
+    fun SendMessageRequest(currentUser: String, user: User, context: Context, view: View){
         request = MessageRequest()
 
-                request.SendMessageRequest(currentUser, user)
+                request.SendMessageRequest(currentUser, user, context, view)
 
     }
 
@@ -96,31 +99,21 @@ class MainViewModel: ViewModel() {
             return firebaseData.getLocationUsers()
     }
 
-    fun ShowCircle(latLng: LatLng, Radius: Float, mMap: GoogleMap): Boolean{
+    fun ShowCircle(latLng: LatLng, Radius: Float, mMap: GoogleMap, CircleShadow: Boolean): Boolean{
         geofenceMaps = GeofenceMaps()
         if(latLng.latitude.equals(null) || latLng.longitude.equals(null)){
             return false
         }
         else{
-            geofenceMaps.addCircle(latLng, Radius, mMap)
+            if(CircleShadow){
+                geofenceMaps.addCircleShadow(latLng, Radius, mMap)
+            }else{
+                geofenceMaps.addCircle(latLng, Radius, mMap)
+            }
+
             return true
         }
 
-    }
-
-    fun SetGeofences(context: Context, GEOFENCE_ID: String, latLng: LatLng, Radius: Float){
-        geofencingClient = LocationServices.getGeofencingClient(context)
-        geofenceHelper = GeofenceHelper(context)
-
-        val geofence = geofenceHelper.getGeofence(GEOFENCE_ID, latLng, Radius, Geofence.GEOFENCE_TRANSITION_ENTER or Geofence.GEOFENCE_TRANSITION_DWELL or Geofence.GEOFENCE_TRANSITION_EXIT)
-        val geofencingRequest = geofenceHelper.getGeofencingRequest(geofence)
-        val pendingIntent = geofenceHelper.getPendingIntent()
-        geofencingClient.addGeofences(geofencingRequest, pendingIntent)
-                .addOnSuccessListener { Log.d(TAG, "onSuccess: Geofence Added...") }
-                .addOnFailureListener { e ->
-                    val errorMessage = geofenceHelper.getErrorString(e)
-                    Log.d(TAG, "onFailure: $errorMessage")
-                }
     }
 
     sealed class RequestUiState {

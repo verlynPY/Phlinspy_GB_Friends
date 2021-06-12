@@ -11,6 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
@@ -34,24 +35,34 @@ import com.example.testnav.model.Utils.OpenRequetAtivity
                     ) {
                         Row(modifier = Modifier.fillMaxWidth().padding(8.dp)) {
                             Image(
-                                imageResource(R.drawable.profile), modifier = Modifier.clip(
-                                    CircleShape
+                                imageResource(R.drawable.profile),
+                                modifier =
+                                Modifier
+                                    .preferredHeight(65.dp)
+                                    .preferredWidth(65.dp)
+                                    .clip(CircleShape),
+                                contentScale = ContentScale.Crop,
+                            )
+                            Column {
+                                Text(
+                                    text = "${list.UserName}",
+                                    modifier = Modifier.absolutePadding(top = 15.dp, left = 15.dp),
+                                    fontSize = 20.sp,
+                                    fontWeight = FontWeight.Medium
                                 )
-                            )
-                            Text(
-                                text = "${list.UserName}",
-                                modifier = Modifier.absolutePadding(top = 10.dp, left = 10.dp),
-                                fontSize = 24.sp,
-                                fontWeight = FontWeight.SemiBold
-                            )
+                                Text(
+                                    text = "3 Minutes ago",
+                                    modifier = Modifier.absolutePadding(top = 2.dp, left = 15.dp),
+                                    fontSize = 12.sp,
+                                    fontWeight = FontWeight.Light
+                                )
+                            }
                             Box(modifier = Modifier.fillParentMaxWidth(), Alignment.CenterEnd) {
                                 Icon(vectorResource(R.drawable.ic_point),modifier = Modifier.absolutePadding(top = 25.dp), tint = MaterialTheme.colors.primary)
                             }
-
                         }
                     }
                 }
-
             }
         }
     }
