@@ -3,6 +3,7 @@ package com.example.testnav
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
 import android.location.LocationManager
@@ -31,10 +32,12 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.setContent
 import androidx.compose.ui.res.imageResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.app.ActivityCompat
@@ -42,6 +45,8 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentManager
 import com.example.testnav.model.RegisterUser
 import com.example.testnav.model.User
+import com.example.testnav.view.MainActivity
+import com.example.testnav.view.buttomModifier
 import com.example.testnav.viewmodel.MainViewModel
 import com.google.android.gms.location.*
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -77,7 +82,7 @@ class RegisterActivity : AppCompatActivity() {
                         MaterialThemee.darkColor else MaterialThemee.lightColor
             ) {
                 Surface(color = Color(0, 0, 0)) {
-                    Register()
+                    Register(applicationContext)
                 }
             }
         }
@@ -86,16 +91,21 @@ class RegisterActivity : AppCompatActivity() {
 
 
     @Composable
-    fun Register() {
+    fun Register(context: Context) {
         Column() {
             Row() {
-                IconButton(onClick = { }) {
-                    Icon(Icons.Filled.ArrowBack, tint = Color(150, 150, 150))
+                IconButton(onClick = {
+                    finish()
+                }) {
+                    Icon(vectorResource(R.drawable.ic_back), tint = MaterialThemee.yellow_Mostash)
                 }
                 Image(
-                        imageResource(id = R.mipmap.imgmaps), modifier = Modifier
+                        imageResource(id = R.drawable.googlemaps_gold),
+                    modifier = Modifier
                         .fillMaxWidth()
-                        .preferredHeight(140.dp)
+                        .preferredHeight(120.dp)
+                        .absolutePadding(right = 30.dp, bottom = 10.dp)
+
                 )
             }
             Column(
@@ -111,7 +121,7 @@ class RegisterActivity : AppCompatActivity() {
                         backgroundColor = Color(255, 255, 255)
                 )
                 {
-                    Column(modifier = Modifier.padding(20.dp)) {
+                    Column(modifier = Modifier.padding(15.dp)) {
                         val userName = remember { mutableStateOf("") }
                         val passWord = remember { mutableStateOf("") }
                         val email = remember { mutableStateOf("") }
@@ -137,33 +147,39 @@ class RegisterActivity : AppCompatActivity() {
                                 inactiveColor = MaterialTheme.colors.onSecondary,
                                 activeColor = MaterialTheme.colors.onSecondary,
                                 modifier = Modifier.fillMaxWidth(),
-                                placeholder = { androidx.compose.material.Text(text = "UserName") }
+                                placeholder = { androidx.compose.material.Text(text = "UserName") },
 
                         )
                         Spacer(modifier = Modifier.height(5.dp))
-                        OutlinedTextField(value = numberPhone.value,
-                                onValueChange = { numberPhone.value = it },
-                                inactiveColor = MaterialTheme.colors.onSecondary,
-                                activeColor = MaterialTheme.colors.onSecondary,
-                                keyboardOptions = KeyboardOptions(
+                        Row(modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween) {
+                            Box(modifier = Modifier.preferredWidth(180.dp)
+                                .absolutePadding(right = 5.dp)) {
+                                OutlinedTextField(value = numberPhone.value,
+                                    onValueChange = { numberPhone.value = it },
+                                    inactiveColor = MaterialTheme.colors.onSecondary,
+                                    activeColor = MaterialTheme.colors.onSecondary,
+                                    keyboardOptions = KeyboardOptions(
                                         keyboardType = KeyboardType.Number
-                                ),
-                                modifier = Modifier.fillMaxWidth(),
-                                placeholder = { androidx.compose.material.Text(text = "NumberPhone") }
+                                    ),
 
-                        )
-                        Spacer(modifier = Modifier.height(5.dp))
-                        OutlinedTextField(value = age.value,
-                                onValueChange = { age.value = it },
-                                inactiveColor = MaterialTheme.colors.onSecondary,
-                                activeColor = MaterialTheme.colors.onSecondary,
-                                keyboardOptions = KeyboardOptions(
+                                    placeholder = { androidx.compose.material.Text(text = "Phone") }
+                                )
+                            }
+                            Box(modifier = Modifier.preferredWidth(180.dp)
+                                .absolutePadding(left = 5.dp)) {
+                                OutlinedTextField(value = age.value,
+                                    onValueChange = { age.value = it },
+                                    inactiveColor = MaterialTheme.colors.onSecondary,
+                                    activeColor = MaterialTheme.colors.onSecondary,
+                                    keyboardOptions = KeyboardOptions(
                                         keyboardType = KeyboardType.Number
-                                ),
-                                modifier = Modifier.fillMaxWidth(),
-                                placeholder = { androidx.compose.material.Text(text = "Age") }
+                                    ),
 
-                        )
+                                    placeholder = { androidx.compose.material.Text(text = "Age") }
+                                )
+                            }
+                        }
                         Spacer(modifier = Modifier.height(5.dp))
                         OutlinedTextField(value = hobby.value,
                                 onValueChange = { hobby.value = it },
@@ -200,7 +216,7 @@ class RegisterActivity : AppCompatActivity() {
                         Spacer(modifier = Modifier.height(5.dp))
                         displayRadioGroup()
 
-                        Spacer(modifier = Modifier.height(15.dp))
+                        Spacer(modifier = Modifier.height(5.dp))
                         Button(
                                 onClick = {
                                     if (latitud!!.equals(0) || longitud!!.equals(0)) {
@@ -221,21 +237,73 @@ class RegisterActivity : AppCompatActivity() {
                                         viewModel.SaveUsers(user)
                                     }
 
-                                }, colors = ButtonConstants.defaultButtonColors(backgroundColor = MaterialTheme.colors.primary), modifier = Modifier
+                                }, colors = ButtonConstants.defaultButtonColors(backgroundColor = MaterialTheme.colors.secondary),
+                            modifier = Modifier
                                 .fillMaxWidth()
-                                .preferredHeight(55.dp)
+                                .preferredHeight(60.dp)
                                 .clip(
-                                        RoundedCornerShape(
-                                                topLeft = 25.dp, bottomLeft = 25.dp,
-                                                bottomRight = 30.dp
-                                        )
+                                        RoundedCornerShape(30.dp)
                                 )
                         ) {
                             androidx.compose.material.Text(
                                     text = "SingUp",
                                     fontSize = 18.sp,
-                                    fontWeight = FontWeight.Bold
+                                    fontWeight = FontWeight.Bold,
+                                color = MaterialThemee.yellow_Mostash
                             )
+                        }
+                        Spacer(modifier = Modifier.preferredHeight(20.dp))
+                        Row(modifier = Modifier.fillMaxWidth().preferredHeight(180.dp),
+                            horizontalArrangement = Arrangement.Center) {
+                            Button(
+                                onClick = {
+                                    val intent = Intent(context, MainActivity::class.java)
+                                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                                    context.startActivity(intent)
+                                }, colors =
+                                ButtonConstants.defaultButtonColors(
+                                    backgroundColor = MaterialTheme.colors.secondary
+                                ),
+                                modifier = buttomModifier
+                            ) {
+                                Image(
+                                    imageResource(id = R.drawable.google),
+                                    modifier = Modifier.absolutePadding(right = 8.dp)
+                                )
+
+                                androidx.compose.material.Text(
+                                    text = "Sign In",
+                                    fontSize = 14.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = MaterialThemee.yellow_Mostash
+                                )
+                            }
+                            Spacer(modifier = Modifier.preferredWidth(10.dp))
+
+                            Button(
+                                onClick = {
+                                    val intent = Intent(context, MainActivity::class.java)
+                                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                                    context.startActivity(intent)
+
+                                }, colors =
+                                ButtonConstants.defaultButtonColors(
+                                    backgroundColor = MaterialTheme.colors.secondary
+                                ),
+                                modifier = buttomModifier
+                            ) {
+                                Image(
+                                    imageResource(id = R.drawable.facebook),
+                                    modifier = Modifier.absolutePadding(right = 8.dp)
+                                )
+
+                                androidx.compose.material.Text(
+                                    text = "Sign In",
+                                    fontSize = 14.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = MaterialThemee.yellow_Mostash
+                                )
+                            }
                         }
                     }
                 }

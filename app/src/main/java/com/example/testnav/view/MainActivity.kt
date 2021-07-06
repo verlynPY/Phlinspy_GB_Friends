@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
+import android.view.WindowManager
 import android.widget.*
 import androidx.core.content.ContextCompat
 import androidx.navigation.findNavController
@@ -17,6 +18,7 @@ import com.example.testnav.mapsFragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.bottomsheet.BottomSheetDialog
 
+@Suppress("DEPRECATION")
 class MainActivity : AppCompatActivity() {
 
 

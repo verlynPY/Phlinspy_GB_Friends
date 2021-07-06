@@ -24,11 +24,13 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import com.example.testnav.MaterialThemee
 import com.example.testnav.R
+import com.example.testnav.model.Request
 import com.example.testnav.model.User
 import com.example.testnav.model.Utils.OpenRequetAtivity
 import com.example.testnav.view.CircularIndicator
 import com.example.testnav.view.ShowRequests
 import com.example.testnav.viewmodel.MainViewModel
+import com.example.testnav.viewmodel.RoomViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import kotlinx.coroutines.flow.collect
@@ -46,6 +48,7 @@ class RequestsFragment : Fragment() {
     private var param2: String? = null
 
     private val viewModel: MainViewModel by viewModels()
+    private val roomViewModel: RoomViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -67,10 +70,8 @@ class RequestsFragment : Fragment() {
                     colors = if (isSystemInDarkTheme())
                         MaterialThemee.darkColor else MaterialThemee.lightColor
                 ) {
-                    val ListUser = ArrayList<User>()
-                    val Active = remember { mutableStateOf(false) }
-                    viewModel.EmitReceivedRequest("oxGvYueyE4hflxgkEJEH9YBuLFf1").observe(viewLifecycleOwner, Observer {
 
+                    /*viewModel.EmitReceivedRequest("oxGvYueyE4hflxgkEJEH9YBuLFf1").observe(viewLifecycleOwner, Observer {
                         ListUser.clear()
                         for (i in it) {
                             ListUser.add(i)
@@ -78,12 +79,42 @@ class RequestsFragment : Fragment() {
                                 Active.value = true
                             }
                         }
-                    })
+                    })*/
 
                     ConstraintLayout(modifier = Modifier.background(MaterialTheme.colors.onBackground)) {
+                        val ListRequest: ArrayList<Request> = ArrayList()
+                        val List = remember { mutableStateOf(ArrayList<Request>()) }
+                        val Active = remember { mutableStateOf(false) }
+
+                        lifecycleScope.launchWhenCreated {
+                            context.let{ roomViewModel.EmitRequestsById(it) }
+                            roomViewModel.uiState.collect { uiState ->
+
+                                when(uiState){
+                                    is RoomViewModel.RequestByIdUiState.Success -> {
+                                        if(uiState.requests != null){
+                                            for(i in uiState.requests){
+                                                ListRequest.add(i)
+                                                List.value = ListRequest
+
+                                                if(!ListRequest.isEmpty()) {
+
+                                                    Active.value = true
+
+                                                }
+                                            }
+                                            //ShowRequests(list = uiState.requests, context = context)
+                                        }
+                                    }
+                                    is RoomViewModel.RequestByIdUiState.Error ->  Log.e(TAG, "${uiState.exception}")
+                                }
+
+                            }
+
+                        }
                         when (Active.value) {
                             true -> {
-                                ShowRequests(list = ListUser, context = context)
+                                ShowRequests(list = ListRequest, context = context)
                             }
                             false -> {
                                 CircularIndicator()

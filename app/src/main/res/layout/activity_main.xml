@@ -12,7 +12,7 @@
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/navigation_view"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
+        android:layout_height="80dp"
         android:layout_marginRight="30dp"
         android:layout_marginLeft="30dp"
         android:layout_marginBottom="12dp"
@@ -21,7 +21,8 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:itemIconTint="@color/teal_700"
         app:itemTextColor="#00FFFFFF"
-        app:itemIconSize="28dp"
+        app:itemIconSize="26dp"
+
         app:menu="@menu/menu"
         tools:layout_editor_absoluteX="1dp" />
 

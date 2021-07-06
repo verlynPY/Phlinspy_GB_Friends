@@ -18,11 +18,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.testnav.R
+import com.example.testnav.model.Request
 import com.example.testnav.model.User
 import com.example.testnav.model.Utils.OpenRequetAtivity
 
 @Composable
-    fun ShowRequests(context: Context, list: ArrayList<User>){
+    fun ShowRequests(context: Context, list: List<Request>){
         LazyColumn{
             itemsIndexed(items = list){ index, list ->
                 Column(modifier = Modifier.padding(1.dp)
@@ -57,8 +58,15 @@ import com.example.testnav.model.Utils.OpenRequetAtivity
                                     fontWeight = FontWeight.Light
                                 )
                             }
-                            Box(modifier = Modifier.fillParentMaxWidth(), Alignment.CenterEnd) {
-                                Icon(vectorResource(R.drawable.ic_point),modifier = Modifier.absolutePadding(top = 25.dp), tint = MaterialTheme.colors.primary)
+                            Box(modifier = Modifier.fillParentMaxWidth(), Alignment.CenterEnd)
+                            {
+                                if(!list.StateView) {
+                                    Icon(
+                                        vectorResource(R.drawable.ic_point),
+                                        modifier = Modifier.absolutePadding(top = 25.dp),
+                                        tint = MaterialTheme.colors.primary
+                                    )
+                                }
                             }
                         }
                     }

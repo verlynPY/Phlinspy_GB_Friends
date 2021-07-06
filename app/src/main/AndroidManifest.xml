@@ -19,6 +19,17 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.TestNav">
         <activity
+            android:name=".view.HomeActivity"
+            android:exported="true"
+            android:label="@string/title_activity_home"
+            android:theme="@style/Theme.TestNav.NoActionBar" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
             android:name=".view.RequestActivity"
             android:exported="true"
             android:label="@string/title_activity_request"
@@ -38,7 +49,9 @@
         <activity
             android:name=".RegisterActivity"
             android:label="@string/title_activity_register"
-            android:theme="@style/Theme.TestNav.NoActionBar" />
+            android:theme="@style/Theme.TestNav.NoActionBar">
+
+        </activity>
         <activity
             android:name=".LoginActivity"
             android:label="@string/title_activity_login"
@@ -60,16 +73,9 @@
         <activity
             android:name=".view.MapsActivity"
             android:label="@string/title_activity_maps" />
-
         <activity
             android:name=".view.MainActivity"
-            android:theme="@style/Theme.AppCompat.DayNight.NoActionBar">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+            android:theme="@style/Theme.AppCompat.DayNight.NoActionBar"></activity>
     </application>
 
 </manifest>

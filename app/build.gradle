@@ -69,6 +69,8 @@ dependencies {
     implementation 'androidx.navigation:navigation-fragment-ktx:2.3.4'
     implementation 'androidx.navigation:navigation-ui-ktx:2.3.4'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.1"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.4.1"
 
     //Hilt
     implementation "com.google.dagger:hilt-android:2.28-alpha"
@@ -84,6 +86,8 @@ dependencies {
     implementation 'com.google.firebase:firebase-auth:20.0.2'
     implementation 'com.google.firebase:firebase-database:19.3.1'
     implementation 'com.google.firebase:firebase-firestore-ktx:21.4.3'
+    implementation platform('com.google.firebase:firebase-bom:28.1.0')
+        implementation 'com.google.firebase:firebase-storage-ktx'
 
     //Material design
     implementation 'com.google.android.material:material:1.2.0-alpha02'
@@ -98,6 +102,12 @@ dependencies {
     }
 
     implementation 'com.google.code.gson:gson:2.8.6'
+
+
+    def room_version = "2.3.0"
+    kapt "androidx.room:room-compiler:$room_version"
+    implementation("androidx.room:room-runtime:$room_version")
+    implementation("androidx.room:room-ktx:$room_version")
 
 
 

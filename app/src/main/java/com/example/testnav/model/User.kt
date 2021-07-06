@@ -10,5 +10,6 @@ data class User (
     val Latitude: String = "",
     val Longitude: String = "",
     val Email: String = "",
-    val PassWord: String = ""
+    val PassWord: String = "",
+    val statusview: Boolean = false
 )

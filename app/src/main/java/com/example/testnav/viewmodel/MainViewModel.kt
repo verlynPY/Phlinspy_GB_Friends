@@ -23,52 +23,52 @@ import com.google.android.gms.maps.model.LatLng
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import java.lang.Exception
+
 
 
 class MainViewModel: ViewModel() {
 
     private lateinit var registerUser: RegisterUser
     private lateinit var geofenceMaps: GeofenceMaps
-    private lateinit var geofencingClient: GeofencingClient
-    private lateinit var geofenceHelper: GeofenceHelper
     private lateinit var firebaseData: FirebaseData
     private lateinit var request: MessageRequest
-
 
     private val _uiState = MutableStateFlow(RequestUiState.Success(null))
     val uiState: StateFlow<RequestUiState> = _uiState
     val emailError =  mutableStateOf(false)
 
-
-
-
-
     fun SaveUsers(user: User){
         registerUser = RegisterUser()
-
-        if(user.UserName.isNullOrEmpty() || user.NumberPhone.equals(0) ||
+        try {
+            if (user.UserName.isNullOrEmpty() || user.NumberPhone.equals(0) ||
                 user.Age <= 12 ||
                 user.Hobby.isNullOrEmpty() ||
                 user.Email.isNullOrEmpty() ||
                 user.PassWord.isNullOrEmpty()
-        ){
-            viewModelScope.launch(Dispatchers.IO){
-                registerUser.Register(user)
-                var result = registerUser.Register(user)
-                println("$result")
+            ) {
+                viewModelScope.launch(Dispatchers.IO) {
+                    registerUser.Register(user)
+                    var result = registerUser.Register(user)
+                    println("$result")
+                }
+            } else {
+                println("There are field empty")
             }
         }
-        else{
-            println("There are field empty")
+        catch(e: Exception){
+            Log.e(TAG, "$e")
         }
     }
 
     fun SendMessageRequest(currentUser: String, user: User, context: Context, view: View){
-        request = MessageRequest()
-
+        viewModelScope.launch(Dispatchers.IO) {
+            request = MessageRequest()
+            try{
                 request.SendMessageRequest(currentUser, user, context, view)
-
+            }catch(e: Exception) {
+                Log.e(TAG, "$e")
+            }
+        }
     }
 
     /*fun ReceivedMessageRequest(currentUser: String): MutableLiveData<ArrayList<User>>{
@@ -80,6 +80,13 @@ class MainViewModel: ViewModel() {
         request = MessageRequest()
             return request.ReceivedMessageRequest(currentUser)
         }
+
+    fun UpdateStatusViewRequest(currentUser: String, IdFriend: String){
+
+            request = MessageRequest()
+            request.UpdateStatusView(currentUser, IdFriend)
+
+    }
 
 
     suspend fun GettingMessageRequest(currentUser: String) = flow{
@@ -101,18 +108,23 @@ class MainViewModel: ViewModel() {
 
     fun ShowCircle(latLng: LatLng, Radius: Float, mMap: GoogleMap, CircleShadow: Boolean): Boolean{
         geofenceMaps = GeofenceMaps()
-        if(latLng.latitude.equals(null) || latLng.longitude.equals(null)){
-            return false
-        }
-        else{
-            if(CircleShadow){
-                geofenceMaps.addCircleShadow(latLng, Radius, mMap)
-            }else{
-                geofenceMaps.addCircle(latLng, Radius, mMap)
+
+            if (latLng.latitude.equals(null) || latLng.longitude.equals(null)) {
+                return false
+            } else {
+                try {
+                    if (CircleShadow) {
+                        geofenceMaps.addCircleShadow(latLng, Radius, mMap)
+                    } else {
+                        geofenceMaps.addCircle(latLng, Radius, mMap)
+                    }
+                }catch(e: Exception){
+                    Log.e(TAG, "$e")
+                }
+
+                return true
             }
 
-            return true
-        }
 
     }
 

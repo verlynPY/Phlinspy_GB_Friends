@@ -19,9 +19,11 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import com.example.testnav.databinding.ActivityMapsBinding
+import com.example.testnav.model.Request
 import com.example.testnav.model.User
 import com.example.testnav.view.ManagerDialog
 import com.example.testnav.viewmodel.MainViewModel
+import com.example.testnav.viewmodel.RoomViewModel
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -57,6 +59,7 @@ class mapsFragment : Fragment(), OnMapReadyCallback{
     private var param1: String? = null
     private var param2: String? = null
     private val viewModel: MainViewModel by viewModels()
+    private val viewModelRoom: RoomViewModel by viewModels()
     var gson = Gson()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -211,14 +214,6 @@ class mapsFragment : Fragment(), OnMapReadyCallback{
 
             }
 
-        val cOptions = CircleOptions().let {
-            it.center(sydney)
-            it.radius(80.0)
-            it.fillColor(Color.argb(30, 100,0,150))
-            it.strokeWidth(6f)
-            it.strokeColor(Color.argb(30, 100,0,150))
-        }
-
 
         viewModel.GetUserInfo().observe(this, Observer { user ->
             listUser.add(user)
@@ -266,7 +261,12 @@ class mapsFragment : Fragment(), OnMapReadyCallback{
             view?.let {
                 context?.let { it1 ->
                     MDialog.DialogProfilePreview(it1, gson, marker, it,
-                        { viewModel.SendMessageRequest("oxGvYueyE4hflxgkEJEH9YBuLFf1", user, it1, it) })
+                        {
+                            //viewModel.SendMessageRequest("oxGvYueyE4hflxgkEJEH9YBuLFf1", user, it1, it)
+                            val request = Request(null, "oxGvYueyE4hflxgkEJEH9YBuLFf1", user.Id,
+                            user.UserName, false)
+                            viewModelRoom.AddRequest(request, it1,it)
+                        })
 
 
                 }

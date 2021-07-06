@@ -12,5 +12,8 @@
     <string name="gender">Gender</string>
     <string name="man">Man</string>
     <string name="women">Women</string>
+    <string name="requestsuccessfully">Request Successfully</string>
+    <string name="requesterror">Request Error</string>
     <string name="title_activity_request">RequestActivity</string>
+    <string name="title_activity_home">HomeActivity</string>
 </resources>

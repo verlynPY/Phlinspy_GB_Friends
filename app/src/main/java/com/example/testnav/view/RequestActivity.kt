@@ -2,6 +2,7 @@ package com.example.testnav.view
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import androidx.activity.viewModels
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -26,9 +27,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.testnav.MaterialThemee
 import com.example.testnav.R
+import com.example.testnav.viewmodel.MainViewModel
+import com.example.testnav.viewmodel.RoomViewModel
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 
 
 class RequestActivity : ComponentActivity() {
+
+    private val viewModel: RoomViewModel by viewModels()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -141,6 +148,18 @@ class RequestActivity : ComponentActivity() {
                 }
             }
         }
+    }
+
+    override fun onStart() {
+        super.onStart()
+
+        val bundle = intent.extras
+        val Id = bundle!!.getCharSequence("Id")
+
+        val auth = FirebaseAuth.getInstance()
+        //val user: FirebaseUser = auth.currentUser!!
+
+        viewModel.UpdateStatusView(applicationContext, Id.toString())
     }
 }
 
