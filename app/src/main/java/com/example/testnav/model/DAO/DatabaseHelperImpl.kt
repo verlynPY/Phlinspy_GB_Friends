@@ -1,10 +1,12 @@
 package com.example.testnav.model.DAO
 
 import com.example.testnav.model.Request
+import com.example.testnav.model.SettingFilter
 import com.example.testnav.model.Utils.ID
 
 class DatabaseHelperImpl(private val appDatabase: AppDatabase): DatabaseHelper {
 
+    //Requests
     override suspend fun getRequets(): List<Request> = appDatabase.requestDao().GettAll()
 
     override suspend fun getRequestsById(): List<Request> = appDatabase
@@ -14,5 +16,7 @@ class DatabaseHelperImpl(private val appDatabase: AppDatabase): DatabaseHelper {
         .requestDao().UpdateStatusView(true, ID)
 
     override suspend fun insertRequest(request: Request) = appDatabase.requestDao().AddRequest(request)
+
+
 
 }

@@ -23,8 +23,6 @@ class MessageRequest {
     fun SendMessageRequest(currentUser: String, mUser: User, context: Context, view: View){
         try {
             listRequest.add(mUser)
-            var auth = FirebaseAuth.getInstance()
-            //var user: FirebaseUser = auth.currentUser!!
             reference = FirebaseDatabase.getInstance().reference
             var hashmap: HashMap<String, Any> = HashMap()
             hashmap.put("Id", mUser.Id)
@@ -53,42 +51,6 @@ class MessageRequest {
 
     }
 
-    fun ReceivedMessageRequest(currentUser: String): MutableLiveData<ArrayList<User>>{
-        val liveData = MutableLiveData<ArrayList<User>>()
-        val list: ArrayList<User> = ArrayList()
-        reference = FirebaseDatabase.getInstance().getReference(PathRequests).child(currentUser)
-        reference.addValueEventListener(object: ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                for(snapshot in snapshot.children){
-                    val user = snapshot.getValue(User::class.java)
-                    list.add(user!!)
-                    liveData.value = list
-                    //Log.e(TAG, "User received $snapshot")
-                }
-            }
-            override fun onCancelled(error: DatabaseError) {
-                Log.e(TAG, "Heyyy  $error")
-            }
-        })
-        return liveData
-    }
 
-    fun UpdateStatusView(currentUser: String, IdFriend: String){
-        reference = FirebaseDatabase.getInstance()
-            .getReference(PathRequests)
-            .child(currentUser)
-            
-
-        val statusUpdate = mapOf<String, Boolean>(
-        "statusview" to true
-        )
-
-        reference.updateChildren(statusUpdate).addOnCompleteListener {
-            Log.i(TAG, "Child Updated Successfully")
-        }.addOnFailureListener {
-            Log.e(TAG, "Child no was updated")
-        }
-
-    }
 
 }

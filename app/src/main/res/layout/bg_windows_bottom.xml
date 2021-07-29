@@ -1,10 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
+
+<layout>
+    
+    <data>
+        <variable
+            name="viewmodel"
+            type="com.example.testnav.viewmodel.RoomViewModel" />
+    </data>
+
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/bottomViewContainer"
     android:background="@drawable/bg_window"
     android:layout_width="match_parent"
     android:orientation="vertical"
     android:layout_height="360dp">
+
+
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -231,3 +242,5 @@
 
 
 </LinearLayout>
+
+</layout>

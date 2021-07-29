@@ -5,6 +5,7 @@ import androidx.room.Room
 
 object DataBaseBuilder {
 
+    @Volatile
     private var INSTANCE: AppDatabase? = null
 
     fun getInstance(context: Context): AppDatabase {

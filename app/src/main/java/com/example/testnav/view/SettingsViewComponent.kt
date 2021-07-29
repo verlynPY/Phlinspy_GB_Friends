@@ -23,7 +23,7 @@ import androidx.compose.ui.window.Dialog
 import com.example.testnav.R
 
 
-@Preview
+    @Preview
     @Composable
     fun Profile() {
 

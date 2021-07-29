@@ -43,7 +43,9 @@ import androidx.compose.ui.unit.sp
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentManager
+import androidx.lifecycle.lifecycleScope
 import com.example.testnav.model.RegisterUser
+import com.example.testnav.model.SettingFilter
 import com.example.testnav.model.User
 import com.example.testnav.view.MainActivity
 import com.example.testnav.view.buttomModifier
@@ -73,6 +75,14 @@ class RegisterActivity : AppCompatActivity() {
             .inflate(R.layout.bg_windows_bottom, findViewById(R.id.bottomViewContainer))
         bottomSheetDialog.setContentView(bottomView)
         bottomSheetDialog.show()*/
+
+        val settingFilter = SettingFilter("oxGvYueyE4hflxgkEJEH9YBuLFf1", 25, 25,
+            8F, "Mujer")
+
+        //lifecycleScope.launchWhenCreated {
+            viewModel.SetPreferences(this@RegisterActivity, settingFilter)
+        //}
+
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
 
         getLastLocation()
@@ -236,7 +246,6 @@ class RegisterActivity : AppCompatActivity() {
                                         registerUser = RegisterUser()
                                         viewModel.SaveUsers(user)
                                     }
-
                                 }, colors = ButtonConstants.defaultButtonColors(backgroundColor = MaterialTheme.colors.secondary),
                             modifier = Modifier
                                 .fillMaxWidth()

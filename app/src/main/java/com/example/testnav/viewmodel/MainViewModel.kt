@@ -1,23 +1,15 @@
 package com.example.testnav.viewmodel
 
+import android.app.Activity
 import android.content.ContentValues.TAG
-import android.content.Context
-import android.location.Location
 import android.util.Log
-import android.view.View
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.testnav.model.*
-import com.example.testnav.model.Geofences.GeofenceHelper
-import com.example.testnav.model.Geofences.GeofenceMaps
-import com.example.testnav.model.ManagerLocation.getLocation
-import com.google.android.gms.location.Geofence
-import com.google.android.gms.location.GeofencingClient
-import com.google.android.gms.location.LocationServices
+import com.example.testnav.model.Geofences.ComponentsMaps
+import com.example.testnav.model.Preferences.SharedPreferencesManager
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.LatLng
 import kotlinx.coroutines.Dispatchers
@@ -29,9 +21,11 @@ import kotlinx.coroutines.launch
 class MainViewModel: ViewModel() {
 
     private lateinit var registerUser: RegisterUser
-    private lateinit var geofenceMaps: GeofenceMaps
+    private lateinit var componentsMaps: ComponentsMaps
     private lateinit var firebaseData: FirebaseData
-    private lateinit var request: MessageRequest
+    val sharedPreferencesManager = SharedPreferencesManager()
+
+    val liveData = MutableLiveData<SettingFilter>()
 
     private val _uiState = MutableStateFlow(RequestUiState.Success(null))
     val uiState: StateFlow<RequestUiState> = _uiState
@@ -60,46 +54,24 @@ class MainViewModel: ViewModel() {
         }
     }
 
-    fun SendMessageRequest(currentUser: String, user: User, context: Context, view: View){
-        viewModelScope.launch(Dispatchers.IO) {
-            request = MessageRequest()
-            try{
-                request.SendMessageRequest(currentUser, user, context, view)
-            }catch(e: Exception) {
-                Log.e(TAG, "$e")
+
+    fun SetPreferences(activity: Activity?, settingFilter: SettingFilter){
+        viewModelScope.launch(Dispatchers.IO){
+            try {
+                sharedPreferencesManager.SaveSetting(activity, settingFilter)
+            }
+            catch (e: Exception){
+                Log.e(TAG, "${e}")
             }
         }
     }
 
-    /*fun ReceivedMessageRequest(currentUser: String): MutableLiveData<ArrayList<User>>{
-        request = MessageRequest()
-        return request.ReceivedMessageRequest(currentUser)
-    }*/
-
-    fun EmitReceivedRequest(currentUser: String): MutableLiveData<ArrayList<User>>{
-        request = MessageRequest()
-            return request.ReceivedMessageRequest(currentUser)
+    fun GetPreferences(activity: Activity?, UserId: String): MutableLiveData<SettingFilter>{
+        viewModelScope.launch(Dispatchers.Main){
+             liveData.value = sharedPreferencesManager.ReadSetting(activity, UserId)
         }
-
-    fun UpdateStatusViewRequest(currentUser: String, IdFriend: String){
-
-            request = MessageRequest()
-            request.UpdateStatusView(currentUser, IdFriend)
-
+        return liveData
     }
-
-
-    suspend fun GettingMessageRequest(currentUser: String) = flow{
-        try{
-            request = MessageRequest()
-            val ListReceivedRequest = request.ReceivedMessageRequest(currentUser)
-            emit(ListReceivedRequest)
-        }
-        catch(e: Exception){
-            println(e)
-        }
-    }
-
 
     fun GetUserInfo(): MutableLiveData<User>{
         firebaseData = FirebaseData()
@@ -107,16 +79,16 @@ class MainViewModel: ViewModel() {
     }
 
     fun ShowCircle(latLng: LatLng, Radius: Float, mMap: GoogleMap, CircleShadow: Boolean): Boolean{
-        geofenceMaps = GeofenceMaps()
+        componentsMaps = ComponentsMaps()
 
             if (latLng.latitude.equals(null) || latLng.longitude.equals(null)) {
                 return false
             } else {
                 try {
                     if (CircleShadow) {
-                        geofenceMaps.addCircleShadow(latLng, Radius, mMap)
+                        componentsMaps.addCircleShadow(latLng, Radius, mMap)
                     } else {
-                        geofenceMaps.addCircle(latLng, Radius, mMap)
+                        componentsMaps.addCircle(latLng, Radius, mMap)
                     }
                 }catch(e: Exception){
                     Log.e(TAG, "$e")

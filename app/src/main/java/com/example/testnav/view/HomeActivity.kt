@@ -24,23 +24,30 @@ import androidx.compose.ui.text.font.fontFamily
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.lifecycleScope
 import com.example.testnav.LoginActivity
 import com.example.testnav.MaterialThemee
 import com.example.testnav.R
 import com.example.testnav.RegisterActivity
 import com.example.testnav.model.Request
+import com.example.testnav.model.SettingFilter
+import com.example.testnav.viewmodel.MainViewModel
 import com.example.testnav.viewmodel.RoomViewModel
 
 
 class HomeActivity : ComponentActivity() {
 
     private val viewmodel: RoomViewModel by viewModels()
+    private val mainViewModel: MainViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         //val request = Request(1, "nose", "nose")
 
         //viewmodel.AddRequest(request, applicationContext)
+
+
+
         viewmodel.getRequests(applicationContext)
 
 

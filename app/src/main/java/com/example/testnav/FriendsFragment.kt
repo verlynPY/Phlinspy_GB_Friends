@@ -8,9 +8,11 @@ import android.view.ViewGroup
 import android.view.Window
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ConstraintLayout
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
 import com.example.testnav.view.Profile
@@ -46,6 +48,18 @@ class FriendsFragment : Fragment() {
                     ConstraintLayout(modifier = Modifier.background(MaterialTheme.colors.onBackground))
                     {
                         Profile()
+                        val numbers = (0..20).toList()
+
+                        /*LazyVerticalGrid(
+                            cells = GridCells.Fixed(3)
+                        ) {
+                            items(numbers.size) {
+                                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                    //Text(text = "Number")
+                                    //Text(text = "  $it")
+                                }
+                            }
+                        }*/
                     }
                 }
 

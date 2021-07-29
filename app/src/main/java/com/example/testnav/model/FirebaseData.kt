@@ -21,7 +21,6 @@ class FirebaseData {
                     var user = snapshot.getValue(User::class.java)
                     liveData.value = user!!
                     Log.e(TAG, "Heyyyyyyyyyyyyyyyyyy   $user")
-
                 }
             }
             override fun onCancelled(error: DatabaseError) {

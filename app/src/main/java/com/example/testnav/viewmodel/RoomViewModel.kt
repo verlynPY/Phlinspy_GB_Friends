@@ -13,6 +13,7 @@ import com.example.testnav.model.DAO.DataBaseBuilder
 import com.example.testnav.model.DAO.DatabaseHelper
 import com.example.testnav.model.DAO.DatabaseHelperImpl
 import com.example.testnav.model.Request
+import com.example.testnav.model.SettingFilter
 import com.example.testnav.view.ManagerDialog
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
@@ -26,9 +27,8 @@ class RoomViewModel: ViewModel() {
 
     val uiState: StateFlow<RequestByIdUiState> = _uiState
 
-
     fun AddRequest(request: Request, context: Context, view: View){
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.Main) {
             try{
                 val dbHelper = DatabaseHelperImpl(DataBaseBuilder.getInstance(context))
                 val db = dbHelper.insertRequest(request)
@@ -54,12 +54,10 @@ class RoomViewModel: ViewModel() {
 
     fun UpdateStatusView(context: Context,IdFriend: String){
         try{
-
             viewModelScope.launch(Dispatchers.Main) {
                 val dbHelperImpl = DatabaseHelperImpl(DataBaseBuilder.getInstance(context))
                 val db = dbHelperImpl.updateStatusView(IdFriend)
             }
-
         } catch(e: Exception){
                 Log.e(TAG, "$e")
             }
@@ -68,18 +66,15 @@ class RoomViewModel: ViewModel() {
 
 
     fun EmitRequestsById(context: Context){
-
         viewModelScope.launch(Dispatchers.Main){
             getRequestsById(context)
                 .flowOn(Dispatchers.IO)
-                /*.transform {
-                    emit(it)
-                }*/
                 .collect { item ->
                     _uiState.value = RequestByIdUiState.Success(item)
                 }
         }
     }
+
 
     private fun getRequestsById(context: Context) = flow{
             try {
@@ -87,7 +82,6 @@ class RoomViewModel: ViewModel() {
                 val db = dbHelper.getRequestsById()
                 emit(db)
                 Log.e(TAG, "Requesttt IDDDDDD: $db")
-                //Log.i(TAG, "Requesttt IDDDDDDDDDDDDDDD: $db")
             } catch (e: Exception) {
                 Log.e(TAG, "Error: $e")
             }

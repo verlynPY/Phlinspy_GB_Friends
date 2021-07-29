@@ -18,9 +18,12 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
 import com.example.testnav.databinding.ActivityMapsBinding
 import com.example.testnav.model.Request
+import com.example.testnav.model.SettingFilter
 import com.example.testnav.model.User
+import com.example.testnav.view.MainActivity
 import com.example.testnav.view.ManagerDialog
 import com.example.testnav.viewmodel.MainViewModel
 import com.example.testnav.viewmodel.RoomViewModel
@@ -33,6 +36,7 @@ import com.google.android.gms.maps.model.*
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 import com.google.gson.Gson
 
 
@@ -55,12 +59,12 @@ class mapsFragment : Fragment(), OnMapReadyCallback{
     private lateinit var auth: FirebaseAuth
     private lateinit var mMap: GoogleMap
     private lateinit var mapView: MapView
-    private lateinit var binding: ActivityMapsBinding
     private var param1: String? = null
     private var param2: String? = null
     private val viewModel: MainViewModel by viewModels()
     private val viewModelRoom: RoomViewModel by viewModels()
-    var gson = Gson()
+    private var gson = Gson()
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -77,6 +81,9 @@ class mapsFragment : Fragment(), OnMapReadyCallback{
     ): View {
 
 
+
+
+
         val mview:View = inflater.inflate(R.layout.fragment_maps, container, false)
         var button = mview?.findViewById<FloatingActionButton>(R.id.radar)
         button!!.setOnClickListener { view ->
@@ -86,40 +93,54 @@ class mapsFragment : Fragment(), OnMapReadyCallback{
             var bottomView = LayoutInflater.from(context)
                     .inflate(R.layout.bg_windows_bottom, view.findViewById(R.id.bottomViewContainer))
             Initialize(bottomView)
+
+
+
             var Distance_Longitud:Int = 1
-            Distance.text = Distance_Longitud.toString()
+            var Age_Years: Int = 16
+            var gender: String? = null
+
             var Longitud:Int = Distance.text.toString().toInt()
 
-            Distance_Up.setOnClickListener {
-                if(Distance_Longitud < 20){
-                    Distance_Longitud+= 1
-                    Distance.text = Distance_Longitud.toString()
-                }
-            }
-            Distance_Down.setOnClickListener {
-                if(Distance_Longitud > 1){
-                    Distance_Longitud-= 1
-                    Distance.text = Distance_Longitud.toString()
-                }
-            }
+            viewModel.GetPreferences(this.activity, "oxGvYueyE4hflxgkEJEH9YBuLFf1")
+                .observe(this.viewLifecycleOwner, Observer { settingfilter ->
+                    Log.e(TAG, "${settingfilter}")
 
-            var Age_Years: Int = 16
-            Age.text = Age_Years.toString()
-            Age_Up.setOnClickListener {
-                if(Age_Years < 55){
-                    Age_Years+=1
+                    Distance_Longitud = settingfilter.Distance.toInt()
+                    Age_Years = settingfilter.AgeMax
+
+                    Distance.text = Distance_Longitud.toString()
+                    Distance_Up.setOnClickListener {
+                        if (Distance_Longitud < 20) {
+                            Distance_Longitud += 1
+                            Distance.text = Distance_Longitud.toString()
+                        }
+                    }
+                    Distance_Down.setOnClickListener {
+                        if (Distance_Longitud > 1) {
+                            Distance_Longitud -= 1
+                            Distance.text = Distance_Longitud.toString()
+                        }
+                    }
                     Age.text = Age_Years.toString()
-                }
-            }
-            Age_Down.setOnClickListener {
-                if(Age_Years > 16){
-                    Age_Years-=1
-                    Age.text = Age_Years.toString()
-                }
-            }
+                    Age_Up.setOnClickListener {
+                        if (Age_Years < 55) {
+                            Age_Years += 1
+                            Age.text = Age_Years.toString()
+                        }
+                    }
+                    Age_Down.setOnClickListener {
+                        if (Age_Years > 16) {
+                            Age_Years -= 1
+                            Age.text = Age_Years.toString()
+                        }
+                    }
+
+                })
+
             bottomView.findViewById<Button>(R.id.buttonExplorel)!!.setOnClickListener {
 
-                var gender: String? = null
+
                 radioMan = bottomView.findViewById(R.id.Man)
                 radioWomen = bottomView.findViewById(R.id.Women)
                 if(radioMan.isChecked){
@@ -131,6 +152,15 @@ class mapsFragment : Fragment(), OnMapReadyCallback{
                     gender = "Women"
                 }
                 val sydney = LatLng(18.8759618, -71.7046444)
+
+                //auth = FirebaseAuth.getInstance()
+                //val currentId: FirebaseUser = auth.currentUser!!
+
+
+                val settingFilter = SettingFilter("oxGvYueyE4hflxgkEJEH9YBuLFf1", Age_Years, Age_Years,
+                    Distance_Longitud.toFloat(), gender)
+
+                viewModel.SetPreferences(this.activity, settingFilter)
             }
             bottomSheetDialog.setContentView(bottomView)
             bottomSheetDialog.show()
@@ -148,12 +178,8 @@ class mapsFragment : Fragment(), OnMapReadyCallback{
         }
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-    }
 
     companion object {
-
 
         @JvmStatic
         fun newInstance(param1: String, param2: String) =
@@ -205,6 +231,8 @@ class mapsFragment : Fragment(), OnMapReadyCallback{
                             .position(sydney)
                             .icon(BitmapDescriptorFactory.fromResource(R.drawable.circle))
                     )
+                    //Initialize(mapView)
+                    //var Radius = Distance.text.toString()
                     viewModel.ShowCircle(sydney, 50F, p0, true)
                     viewModel.ShowCircle(sydney, 500F, p0, false)
                 }
@@ -225,6 +253,9 @@ class mapsFragment : Fragment(), OnMapReadyCallback{
                     .position(latLng)
                     .title(jsonString)
                     .icon(BitmapDescriptorFactory.fromResource(R.drawable.locations_friends))
+
+
+            //SET DISTANCE BETWEEN PEOPLE
 
             /*val currentlocation = Location("current")
             currentlocation.latitude = sydney.latitude
@@ -271,21 +302,6 @@ class mapsFragment : Fragment(), OnMapReadyCallback{
 
                 }
             }
-
-            /*val test = marker!!.title
-
-                            var bottomSheetDialog = view?.let { BottomSheetDialog(it.context, R.style.BottomSheetDialogTheme) }
-                            var bottomView = LayoutInflater.from(context)
-                                    .inflate(R.layout.window_bottom_preview, view?.findViewById(R.id.windows_previewContainer))
-                            var textName_Age = bottomView.findViewById<TextView>(R.id.textName_Age)
-                            textName_Age.text = user.UserName
-                            var bottomSendRequests = bottomView.findViewById<Button>(R.id.buttonRequest)
-                            bottomSendRequests.setOnClickListener {
-                                viewModel.SendMessageRequest(currentId.uid, user)
-                            }
-                            bottomSheetDialog!!.setContentView(bottomView)
-                            bottomSheetDialog.show()*/
-
             true
         }
     }

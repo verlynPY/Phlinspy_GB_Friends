@@ -7,7 +7,7 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 
 
-class GeofenceMaps {
+class ComponentsMaps {
 
     fun addMarker(latLng: LatLng, mMap: GoogleMap){
         val markerOptions = MarkerOptions().position(latLng)
@@ -19,7 +19,6 @@ class GeofenceMaps {
         val circleOptions = CircleOptions()
         circleOptions.center(latLng)
         circleOptions.radius(Radius.toDouble())
-        //circleOptions.fillColor(Color.argb(30, 204,0,255))
         circleOptions.strokeWidth(6f)
         circleOptions.strokeColor(Color.argb(100,255,193,7))
         mMap.addCircle(circleOptions)

@@ -2,11 +2,11 @@ package com.example.testnav.model.DAO
 
 import androidx.room.*
 import com.example.testnav.model.Request
+import com.example.testnav.model.SettingFilter
 import com.example.testnav.model.Utils.ID
 
 @Dao
 interface RequestDao {
-
 
     @Query("SELECT * FROM request")
     suspend fun GettAll(): List<Request>
@@ -22,6 +22,5 @@ interface RequestDao {
 
     @Delete
     suspend fun Delete(request: Request)
-
 
 }

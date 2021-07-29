@@ -16,8 +16,6 @@ class RegisterUser {
         auth = FirebaseAuth.getInstance()
         reference = FirebaseDatabase.getInstance().reference
 
-
-
         auth.createUserWithEmailAndPassword(user.Email, user.PassWord)
                 .addOnCompleteListener { task ->
                     if(task.isSuccessful){

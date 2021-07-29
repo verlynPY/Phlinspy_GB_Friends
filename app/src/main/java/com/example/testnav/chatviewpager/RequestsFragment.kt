@@ -82,18 +82,20 @@ class RequestsFragment : Fragment() {
                     })*/
 
                     ConstraintLayout(modifier = Modifier.background(MaterialTheme.colors.onBackground)) {
-                        val ListRequest: ArrayList<Request> = ArrayList()
-                        val List = remember { mutableStateOf(ArrayList<Request>()) }
+                        val ListRequest: List<Request> = listOf()
+                        val List = remember { mutableStateOf(listOf<Request>()) }
                         val Active = remember { mutableStateOf(false) }
 
                         lifecycleScope.launchWhenCreated {
-                            context.let{ roomViewModel.EmitRequestsById(it) }
-                            roomViewModel.uiState.collect { uiState ->
 
+                            roomViewModel.uiState.collect { uiState ->
+                                context.let{ roomViewModel.EmitRequestsById(it) }
                                 when(uiState){
                                     is RoomViewModel.RequestByIdUiState.Success -> {
                                         if(uiState.requests != null){
-                                            for(i in uiState.requests){
+                                            List.value = uiState.requests!!
+                                            Active.value = true
+                                            /*for(i in uiState.requests){
                                                 ListRequest.add(i)
                                                 List.value = ListRequest
 
@@ -102,7 +104,7 @@ class RequestsFragment : Fragment() {
                                                     Active.value = true
 
                                                 }
-                                            }
+                                            }*/
                                             //ShowRequests(list = uiState.requests, context = context)
                                         }
                                     }
@@ -114,7 +116,8 @@ class RequestsFragment : Fragment() {
                         }
                         when (Active.value) {
                             true -> {
-                                ShowRequests(list = ListRequest, context = context)
+
+                                 ShowRequests(list = List.value, context = context)
                             }
                             false -> {
                                 CircularIndicator()
