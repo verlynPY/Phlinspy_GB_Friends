@@ -2,6 +2,7 @@ package com.example.testnav.viewmodel
 
 import android.app.Activity
 import android.content.ContentValues.TAG
+import android.content.Context
 import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.MutableLiveData
@@ -9,9 +10,14 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.testnav.model.*
 import com.example.testnav.model.Geofences.ComponentsMaps
+import com.example.testnav.model.Preferences.SharedPreferences
 import com.example.testnav.model.Preferences.SharedPreferencesManager
+import com.example.testnav.model.QuickBlox.Authentication
+import com.example.testnav.model.QuickBlox.DialogHelper
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.LatLng
+import com.quickblox.chat.model.QBChatDialog
+import com.quickblox.users.model.QBUser
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -24,6 +30,8 @@ class MainViewModel: ViewModel() {
     private lateinit var componentsMaps: ComponentsMaps
     private lateinit var firebaseData: FirebaseData
     val sharedPreferencesManager = SharedPreferencesManager()
+    private val autentication: Authentication = Authentication()
+
 
     val liveData = MutableLiveData<SettingFilter>()
 
@@ -31,25 +39,26 @@ class MainViewModel: ViewModel() {
     val uiState: StateFlow<RequestUiState> = _uiState
     val emailError =  mutableStateOf(false)
 
-    fun SaveUsers(user: User){
-        registerUser = RegisterUser()
-        try {
-            if (user.UserName.isNullOrEmpty() || user.NumberPhone.equals(0) ||
-                user.Age <= 12 ||
-                user.Hobby.isNullOrEmpty() ||
-                user.Email.isNullOrEmpty() ||
-                user.PassWord.isNullOrEmpty()
-            ) {
-                viewModelScope.launch(Dispatchers.IO) {
-                    registerUser.Register(user)
-                    var result = registerUser.Register(user)
-                    println("$result")
-                }
-            } else {
-                println("There are field empty")
-            }
+    fun RegisterQuickBlox(qbUser: QBUser, mUser: User, context: Context){
+        try{
+                if (mUser.UserName.isNullOrEmpty() || mUser.NumberPhone.equals(0) ||
+                    mUser.Age <= 12 ||
+                    mUser.Hobby.isNullOrEmpty() ||
+                    mUser.Email.isNullOrEmpty() ||
+                    mUser.PassWord.isNullOrEmpty()
+                ) {
+            viewModelScope.launch(Dispatchers.Main) {
+                autentication.RegisterUser(qbUser, mUser, context)
+            } }
+        }catch(e: Exception){
+            Log.e(TAG, "$e")
         }
-        catch(e: Exception){
+    }
+
+    fun LoginQuickBlox(qbUser: QBUser, context: Context){
+        try{
+            autentication.SignIn(qbUser, context)
+        }catch(e: Exception){
             Log.e(TAG, "$e")
         }
     }
@@ -72,6 +81,11 @@ class MainViewModel: ViewModel() {
         }
         return liveData
     }
+
+    fun ReadDialogs(){
+
+    }
+
 
     fun GetUserInfo(): MutableLiveData<User>{
         firebaseData = FirebaseData()

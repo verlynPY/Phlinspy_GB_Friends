@@ -45,22 +45,12 @@ class FriendsFragment : Fragment() {
                     colors = if (isSystemInDarkTheme())
                         MaterialThemee.darkColor else MaterialThemee.lightColor
                 ) {
-                    ConstraintLayout(modifier = Modifier.background(MaterialTheme.colors.onBackground))
-                    {
+
                         Profile()
                         val numbers = (0..20).toList()
 
-                        /*LazyVerticalGrid(
-                            cells = GridCells.Fixed(3)
-                        ) {
-                            items(numbers.size) {
-                                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                                    //Text(text = "Number")
-                                    //Text(text = "  $it")
-                                }
-                            }
-                        }*/
-                    }
+
+
                 }
 
             }

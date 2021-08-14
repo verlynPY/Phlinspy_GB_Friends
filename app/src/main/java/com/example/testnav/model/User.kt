@@ -1,10 +1,10 @@
 package com.example.testnav.model
 
 data class User (
-    val Id: String = "",
+    var Id: String = "",
     val UserName: String = "",
     val NumberPhone: Long = 0,
-    val Age: Long = 0,
+    var Age: Long = 0,
     val Hobby: String = "",
     val Gender: String = "",
     val Latitude: String = "",

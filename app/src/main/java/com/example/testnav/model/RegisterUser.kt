@@ -12,20 +12,22 @@ class RegisterUser {
     private lateinit var auth: FirebaseAuth
     private lateinit var reference: DatabaseReference
 
-    fun Register(user: User){
-        auth = FirebaseAuth.getInstance()
-        reference = FirebaseDatabase.getInstance().reference
+    fun SaveUser(user: User){
+
+        /*auth = FirebaseAuth.getInstance()
 
         auth.createUserWithEmailAndPassword(user.Email, user.PassWord)
                 .addOnCompleteListener { task ->
-                    if(task.isSuccessful){
-                        val User: FirebaseUser = auth.currentUser!!
-                        val Id = User.uid
+                    if(task.isSuccessful){*/
+                        //val User: FirebaseUser = auth.currentUser!!
+                        //val Id = User.uid
+
+        reference = FirebaseDatabase.getInstance().reference
                         val hashMap: HashMap<String, Any> = HashMap()
-                        hashMap.put("Id", Id)
+                        hashMap.put("Id", user.Id)
                         hashMap.put("UserName", user.UserName.capitalize())
-                        hashMap.put("NumberPhone", user.NumberPhone.toString())
-                        hashMap.put("Age", user.Age.toString())
+                        hashMap.put("NumberPhone", user.NumberPhone.toLong())
+                        hashMap.put("Age", user.Age.toLong())
                         hashMap.put("Hobby", user.Hobby.capitalize())
                         hashMap.put("Gender", user.Gender)
                         hashMap.put("Latitude", user.Latitude)
@@ -33,7 +35,7 @@ class RegisterUser {
                         hashMap.put("Email", user.Email)
                         hashMap.put("PassWord", user.PassWord)
 
-                        reference.child(PathFirebase).child(Id).setValue(hashMap)
+                        reference.child(PathFirebase).child(user.Id).setValue(hashMap)
                                 .addOnCompleteListener { task ->
                                     Log.e(TAG, "$task")
                                 }
@@ -41,14 +43,14 @@ class RegisterUser {
                                     Log.e(TAG, "$fail")
                                 }
                     }
-                }
+                /*}
                 .addOnFailureListener { fail ->
 
                     Log.e(TAG, "$fail")
-                }
+                }*/
 
 
 
-    }
+    //}
 
 }

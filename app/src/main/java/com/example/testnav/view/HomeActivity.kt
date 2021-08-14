@@ -29,10 +29,16 @@ import com.example.testnav.LoginActivity
 import com.example.testnav.MaterialThemee
 import com.example.testnav.R
 import com.example.testnav.RegisterActivity
+import com.example.testnav.model.QuickBlox.Connection.ACCOUNT_KEY
+import com.example.testnav.model.QuickBlox.Connection.APPLICATION_ID
+import com.example.testnav.model.QuickBlox.Connection.AUTH_KEY
+import com.example.testnav.model.QuickBlox.Connection.AUTH_SECRET
+import com.example.testnav.model.QuickBlox.Connection.SetConnection
 import com.example.testnav.model.Request
 import com.example.testnav.model.SettingFilter
 import com.example.testnav.viewmodel.MainViewModel
 import com.example.testnav.viewmodel.RoomViewModel
+import com.quickblox.auth.session.QBSettings
 
 
 class HomeActivity : ComponentActivity() {
@@ -42,11 +48,14 @@ class HomeActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         //val request = Request(1, "nose", "nose")
 
         //viewmodel.AddRequest(request, applicationContext)
 
-
+        SetConnection()
+        QBSettings.getInstance().init(applicationContext, APPLICATION_ID, AUTH_KEY, AUTH_SECRET)
+        QBSettings.getInstance().accountKey = ACCOUNT_KEY
 
         viewmodel.getRequests(applicationContext)
 

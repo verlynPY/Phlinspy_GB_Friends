@@ -1,6 +1,8 @@
 package com.example.testnav.view
 
+import android.content.ContentValues
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.viewModels
 import androidx.compose.foundation.Image
@@ -31,6 +33,7 @@ import com.example.testnav.viewmodel.MainViewModel
 import com.example.testnav.viewmodel.RoomViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+import com.quickblox.chat.QBChatService
 
 
 class RequestActivity : ComponentActivity() {
@@ -124,6 +127,13 @@ class RequestActivity : ComponentActivity() {
                                 }
                                 Button(
                                     onClick = {
+                                        val ID = Id.toString().toInt()
+                                        val chatService = QBChatService.getInstance()
+                                        val isLoggedIn = chatService.isLoggedIn
+
+
+                                            viewModel.CreateDialog(ID)
+                                        
 
                                     }, modifier = Modifier.preferredWidth(160.dp)
                                         .preferredHeight(55.dp)

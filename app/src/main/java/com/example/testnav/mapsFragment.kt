@@ -245,7 +245,6 @@ class mapsFragment : Fragment(), OnMapReadyCallback{
 
         viewModel.GetUserInfo().observe(this, Observer { user ->
             listUser.add(user)
-
             val latLng = LatLng(user.Latitude.toDouble(), user.Longitude.toDouble())
             val jsonString = gson.toJson(user)
 

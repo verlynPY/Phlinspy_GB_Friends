@@ -16,4 +16,5 @@
     <string name="requesterror">Request Error</string>
     <string name="title_activity_request">RequestActivity</string>
     <string name="title_activity_home">HomeActivity</string>
+    <string name="title_activity_chat">ChatActivity</string>
 </resources>

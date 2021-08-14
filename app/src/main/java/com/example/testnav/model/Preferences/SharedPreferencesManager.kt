@@ -6,9 +6,16 @@ import android.content.Context
 import android.util.Log
 import com.example.testnav.model.SettingFilter
 import com.google.gson.Gson
+import android.R.id
+
+import android.content.Context.MODE_PRIVATE
+
+import android.content.SharedPreferences
+
+
+
 
 class SharedPreferencesManager {
-
 
     private val gson = Gson()
 

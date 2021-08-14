@@ -52,6 +52,7 @@ import com.example.testnav.view.buttomModifier
 import com.example.testnav.viewmodel.MainViewModel
 import com.google.android.gms.location.*
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.quickblox.users.model.QBUser
 
 
 @Suppress("DEPRECATION")
@@ -233,7 +234,7 @@ class RegisterActivity : AppCompatActivity() {
                                         println("Location cannot be finded")
                                     } else {
                                         var user = User(
-                                                "",
+                                                "12389423",
                                                 userName.value,
                                                 numberPhone.value.toLong(),
                                                 age.value.toLong(),
@@ -243,8 +244,16 @@ class RegisterActivity : AppCompatActivity() {
                                                 email.value,
                                                 passWord.value
                                         )
-                                        registerUser = RegisterUser()
-                                        viewModel.SaveUsers(user)
+
+                                        //registerUser = RegisterUser()
+                                        val qbUser = QBUser()
+                                        qbUser.fullName = user.UserName
+                                        qbUser.email = user.Email
+                                        qbUser.password = user.PassWord
+                                        qbUser.phone = user.NumberPhone.toString()
+                                        qbUser.login = user.UserName
+                                        //viewModel.SaveUsers(user)
+                                        viewModel.RegisterQuickBlox(qbUser, user, this@RegisterActivity)
                                     }
                                 }, colors = ButtonConstants.defaultButtonColors(backgroundColor = MaterialTheme.colors.secondary),
                             modifier = Modifier
