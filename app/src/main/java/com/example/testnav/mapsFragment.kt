@@ -20,6 +20,8 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import com.example.testnav.databinding.ActivityMapsBinding
+import com.example.testnav.model.Preferences.SharedPreferences
+import com.example.testnav.model.QuickBlox.Connection
 import com.example.testnav.model.Request
 import com.example.testnav.model.SettingFilter
 import com.example.testnav.model.User
@@ -38,6 +40,8 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.gson.Gson
+import com.quickblox.auth.session.QBSettings
+import com.quickblox.users.model.QBUser
 
 
 private const val ARG_PARAM1 = "param1"
@@ -64,6 +68,7 @@ class mapsFragment : Fragment(), OnMapReadyCallback{
     private val viewModel: MainViewModel by viewModels()
     private val viewModelRoom: RoomViewModel by viewModels()
     private var gson = Gson()
+    private var currentUser = QBUser()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -81,6 +86,16 @@ class mapsFragment : Fragment(), OnMapReadyCallback{
     ): View {
 
 
+        Connection.SetConnection()
+        context?.let {
+            QBSettings.getInstance().init(
+                it,
+                Connection.APPLICATION_ID,
+                Connection.AUTH_KEY,
+                Connection.AUTH_SECRET
+            )
+        }
+        QBSettings.getInstance().accountKey = Connection.ACCOUNT_KEY
 
 
 
@@ -286,19 +301,17 @@ class mapsFragment : Fragment(), OnMapReadyCallback{
             val test = marker!!.title
             auth = FirebaseAuth.getInstance()
             //val currentId: FirebaseUser = auth.currentUser!!
-
+            currentUser = SharedPreferences.GetCurrentUser()
             val user = gson.fromJson(test, User::class.java)
             view?.let {
                 context?.let { it1 ->
                     MDialog.DialogProfilePreview(it1, gson, marker, it,
                         {
                             //viewModel.SendMessageRequest("oxGvYueyE4hflxgkEJEH9YBuLFf1", user, it1, it)
-                            val request = Request(null, "oxGvYueyE4hflxgkEJEH9YBuLFf1", user.Id,
+                            val request = Request(null, currentUser.id.toString(), user.Id,
                             user.UserName, false)
                             viewModelRoom.AddRequest(request, it1,it)
                         })
-
-
                 }
             }
             true

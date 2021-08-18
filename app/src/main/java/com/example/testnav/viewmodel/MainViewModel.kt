@@ -39,7 +39,7 @@ class MainViewModel: ViewModel() {
     val uiState: StateFlow<RequestUiState> = _uiState
     val emailError =  mutableStateOf(false)
 
-    fun RegisterQuickBlox(qbUser: QBUser, mUser: User, context: Context){
+    fun RegisterQuickBlox(qbUser: QBUser, mUser: User, context: Context, activity: Activity){
         try{
                 if (mUser.UserName.isNullOrEmpty() || mUser.NumberPhone.equals(0) ||
                     mUser.Age <= 12 ||
@@ -48,16 +48,24 @@ class MainViewModel: ViewModel() {
                     mUser.PassWord.isNullOrEmpty()
                 ) {
             viewModelScope.launch(Dispatchers.Main) {
-                autentication.RegisterUser(qbUser, mUser, context)
+                autentication.RegisterUser(qbUser, mUser, context, activity)
             } }
         }catch(e: Exception){
             Log.e(TAG, "$e")
         }
     }
 
-    fun LoginQuickBlox(qbUser: QBUser, context: Context){
+    fun LoginQuickBlox(qbUser: QBUser, context: Context, activity: Activity){
         try{
-            autentication.SignIn(qbUser, context)
+            autentication.SignIn(qbUser, context, activity)
+        }catch(e: Exception){
+            Log.e(TAG, "$e")
+        }
+    }
+
+    fun LogOutQuickBlox(context: Context){
+        try{
+            autentication.Logout(context)
         }catch(e: Exception){
             Log.e(TAG, "$e")
         }

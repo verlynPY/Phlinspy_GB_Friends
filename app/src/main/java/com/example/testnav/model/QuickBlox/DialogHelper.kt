@@ -2,9 +2,15 @@ package com.example.testnav.model.QuickBlox
 
 import android.content.ContentValues
 import android.content.ContentValues.TAG
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
+import com.example.testnav.model.DAO.DataBaseBuilder
+import com.example.testnav.model.DAO.DatabaseHelperImpl
+import com.example.testnav.model.Preferences.SharedPreferences
+import com.example.testnav.model.Request
+import com.example.testnav.model.Utils
 import com.quickblox.chat.QBChatService
 import com.quickblox.chat.QBRestChatService
 import com.quickblox.chat.model.QBChatDialog
@@ -13,11 +19,19 @@ import com.quickblox.chat.utils.DialogUtils
 import com.quickblox.core.QBEntityCallback
 import com.quickblox.core.exception.QBResponseException
 import com.quickblox.core.request.QBRequestGetBuilder
+import com.quickblox.users.model.QBUser
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import org.jivesoftware.smackx.muc.DiscussionHistory
 
 class DialogHelper {
 
-    fun CreateDialog(userId: Int){
+    var currentUser = QBUser()
+
+    fun CreateDialog(userId: Int, request: Request, context: Context){
+
+        currentUser = SharedPreferences.GetCurrentUser()
+
         val occupantIdsList = ArrayList<Int>()
         occupantIdsList.add(userId)
 
@@ -27,19 +41,37 @@ class DialogHelper {
         val dialog = DialogUtils.buildPrivateDialog(userId)
 
         if(isLoggedIn == true) {
-            QBRestChatService.createChatDialog(dialog).performAsync(object :
-                QBEntityCallback<QBChatDialog> {
-                override fun onSuccess(result: QBChatDialog?, params: Bundle?) {
-                    Log.e(ContentValues.TAG, "result:       $result")
-                    JoinDialog(result!!)
+            CreateDialog(dialog, request, context)
+        }else{
+            Autentication.Relogin(currentUser, object : QBEntityCallback<Void> {
+                override fun onSuccess(p0: Void?, p1: Bundle?) {
+                    CreateDialog(dialog, request, context)
                 }
-                override fun onError(responseException: QBResponseException?) {
-                    Log.e(ContentValues.TAG, "${responseException}")
+
+                override fun onError(e: QBResponseException?) {
+                    Log.e(TAG, "Relogin $e")
                 }
             })
-        }else{
-            Log.e(ContentValues.TAG, "User No Connected")
         }
+    }
+
+    fun CreateDialog(dialog: QBChatDialog, request: Request, context: Context){
+        val dbHelper = DatabaseHelperImpl(DataBaseBuilder.getInstance(context))
+
+        QBRestChatService.createChatDialog(dialog).performAsync(object :
+            QBEntityCallback<QBChatDialog> {
+            override fun onSuccess(result: QBChatDialog?, params: Bundle?) {
+                Log.e(ContentValues.TAG, "result:       $result")
+                GlobalScope.launch {
+                    dbHelper.removeRequest(request)
+                }
+                Utils.OpenChatActivity(context, dialog)
+                JoinDialog(result!!)
+            }
+            override fun onError(responseException: QBResponseException?) {
+                Log.e(ContentValues.TAG, "${responseException}")
+            }
+        })
     }
 
     fun JoinDialog(dialog: QBChatDialog){
@@ -53,15 +85,12 @@ class DialogHelper {
                 override fun onSuccess(o: Void?, bundle: Bundle?) {
                     Log.e(TAG, "Join Good")
                     //SendMessage(dialog, "Message Sent")
-
                 }
 
                 override fun onError(e: QBResponseException?) {
                     Log.e(TAG, "Join Error: ${e!!.message}")
                 }
             })
-
-
 
     }
 

@@ -18,14 +18,18 @@ object SharedPreferences {
     val storage = App.getInstance().getSharedPreferences(QBUSER, 0)
 
     fun SaveUser(user: QBUser){
-            val jsonObject = gson.toJson(user)
-            storage.edit().putString(QBUSERDATA, jsonObject).apply()
-        }
+        val jsonObject = gson.toJson(user)
+        storage.edit().putString(QBUSERDATA, jsonObject).apply()
+    }
 
     fun GetCurrentUser(): QBUser{
-        var userjson = storage.getString(QBUSERDATA, "")
-        var user = gson.fromJson(userjson, QBUser::class.java)
-        return user
+        val userjson = storage.getString(QBUSERDATA, "")
+        val user:QBUser? = gson.fromJson(userjson, QBUser::class.java)
+        return user!!
+    }
+
+    fun RemoveUser(){
+        storage.edit().clear().apply()
     }
 
     }

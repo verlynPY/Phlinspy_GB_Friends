@@ -35,6 +35,7 @@ import androidx.lifecycle.lifecycleScope
 import com.example.testnav.R
 import com.example.testnav.Utils
 import com.example.testnav.model.Request
+import com.example.testnav.model.Utils.OpenChatActivity
 import com.example.testnav.view.ChatActivity
 import com.example.testnav.view.CircularIndicator
 import com.example.testnav.view.ShowRequests
@@ -79,12 +80,7 @@ class MessageFragment : Fragment() {
         return ComposeView(requireContext()).apply {
             //val user: FirebaseUser = auth.currentUser!!
 
-
-
                         roomViewModel.ReadDialogs().observe(this@MessageFragment.viewLifecycleOwner, Observer {
-
-
-
 
 
             setContent {
@@ -147,14 +143,7 @@ class MessageFragment : Fragment() {
             .clickable {
 
                 context?.let {
-                    val bundle = Bundle()
-                    val gson = Gson()
-                    val personJsonString = gson.toJson(dialog)
-                    bundle.putString("DIALOG", personJsonString)
-                    Log.e(TAG, "$personJsonString")
-                    val intent = Intent(it, ChatActivity::class.java)
-                    intent.putExtras(bundle)
-                    startActivity(intent)
+                    OpenChatActivity(it, dialog)
                 }
 
             }
@@ -173,8 +162,8 @@ class MessageFragment : Fragment() {
 
                 )
                 Column(modifier = Modifier.absolutePadding(left = 8.dp)) {
-                    Text(text = "Name ${dialog.name}")
-                    Text(text = "Last Message")
+                    Text(text = "${dialog.name}")
+                    Text(text = "${dialog.lastMessage}")
                 }
             }
         }

@@ -1,8 +1,14 @@
 package com.example.testnav.view
 
 import android.content.ContentValues
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
+import android.view.Gravity
+import android.view.LayoutInflater
+import android.view.View
+import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.viewModels
 import androidx.compose.foundation.Image
@@ -29,23 +35,29 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.testnav.MaterialThemee
 import com.example.testnav.R
+import com.example.testnav.model.Request
 import com.example.testnav.viewmodel.MainViewModel
 import com.example.testnav.viewmodel.RoomViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+import com.google.gson.Gson
 import com.quickblox.chat.QBChatService
+import com.quickblox.chat.model.QBChatDialog
 
 
 class RequestActivity : ComponentActivity() {
 
     private val viewModel: RoomViewModel by viewModels()
-
+    private val gson = Gson()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val bundle = intent.extras
         val Id = bundle!!.getCharSequence("Id")
         val UserName = bundle.getCharSequence("UserName")
+
+        val personJsonString = bundle!!.getString("REQUEST")
+        val request = gson.fromJson(personJsonString, Request::class.java)
 
         setContent {
             MaterialTheme(
@@ -110,7 +122,8 @@ class RequestActivity : ComponentActivity() {
                             Row(modifier = Modifier.fillMaxWidth(), Arrangement.Center) {
                                 Button(
                                     onClick = {
-
+                                        viewModel.RemoveRequest(this@RequestActivity, request)
+                                        finish()
                                     }, modifier = Modifier.preferredWidth(160.dp)
                                         .preferredHeight(55.dp)
                                         .absolutePadding(10.dp)
@@ -131,9 +144,9 @@ class RequestActivity : ComponentActivity() {
                                         val chatService = QBChatService.getInstance()
                                         val isLoggedIn = chatService.isLoggedIn
 
+                                            viewModel.CreateDialog(ID, request, this@RequestActivity)
+                                            finish()
 
-                                            viewModel.CreateDialog(ID)
-                                        
 
                                     }, modifier = Modifier.preferredWidth(160.dp)
                                         .preferredHeight(55.dp)
@@ -166,10 +179,18 @@ class RequestActivity : ComponentActivity() {
         val bundle = intent.extras
         val Id = bundle!!.getCharSequence("Id")
 
-        val auth = FirebaseAuth.getInstance()
-        //val user: FirebaseUser = auth.currentUser!!
-
         viewModel.UpdateStatusView(applicationContext, Id.toString())
+    }
+
+    fun Toast(context: Context, message: String){
+        val bg = LayoutInflater.from(context)
+            .inflate(R.layout.bg_toast_successfuly, findViewById(R.id.bg_toast))
+        val toast = Toast.makeText(context, "Top", Toast.LENGTH_SHORT)
+        toast.setGravity(Gravity.TOP, 0,0)
+        var textMessage = bg.findViewById<TextView>(R.id.message)
+        textMessage.text = message
+        toast.view = bg
+        toast.show()
     }
 }
 

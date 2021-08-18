@@ -21,12 +21,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.example.testnav.R
+import com.quickblox.users.model.QBUser
 
 
-    @Preview
+
     @Composable
-    fun Profile() {
-
+    fun Profile(qbUser: QBUser) {
 
     Column(modifier = Modifier.fillMaxSize()) {
         val imageDefault = R.drawable.profile
@@ -53,7 +53,7 @@ import com.example.testnav.R
 
             Row() {
                 Text(
-                    text = "Verlyn Luna Mateo",
+                    text = "${qbUser.fullName.capitalize()}",
                     modifier = Modifier.absolutePadding(left = 24.dp),
                     fontSize = 24.sp, fontWeight = FontWeight.Bold
                 )

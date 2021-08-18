@@ -10,7 +10,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.foundation.layout.ConstraintLayout
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
@@ -19,11 +19,16 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import com.example.testnav.MaterialThemee
 import com.example.testnav.R
+import com.example.testnav.model.Preferences.SharedPreferences
 import com.example.testnav.model.Request
 import com.example.testnav.model.User
 import com.example.testnav.model.Utils.OpenRequetAtivity
@@ -33,6 +38,7 @@ import com.example.testnav.viewmodel.MainViewModel
 import com.example.testnav.viewmodel.RoomViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+import com.quickblox.users.model.QBUser
 import kotlinx.coroutines.flow.collect
 
 // TODO: Rename parameter arguments, choose names that match
@@ -49,6 +55,8 @@ class RequestsFragment : Fragment() {
 
     private val viewModel: MainViewModel by viewModels()
     private val roomViewModel: RoomViewModel by viewModels()
+    private var currentUser = QBUser()
+    private var liveData = MutableLiveData<ArrayList<Request>>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -63,61 +71,51 @@ class RequestsFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         return ComposeView(requireContext()).apply {
-            val auth = FirebaseAuth.getInstance()
-            //val user: FirebaseUser = auth.currentUser!!
+
             setContent {
                 MaterialTheme(
                     colors = if (isSystemInDarkTheme())
                         MaterialThemee.darkColor else MaterialThemee.lightColor
                 ) {
-
-                    /*viewModel.EmitReceivedRequest("oxGvYueyE4hflxgkEJEH9YBuLFf1").observe(viewLifecycleOwner, Observer {
-                        ListUser.clear()
-                        for (i in it) {
-                            ListUser.add(i)
-                            if (!ListUser.isEmpty()) {
-                                Active.value = true
-                            }
-                        }
-                    })*/
-
                     ConstraintLayout(modifier = Modifier.background(MaterialTheme.colors.onBackground)) {
-                        val ListRequest: List<Request> = listOf()
                         val List = remember { mutableStateOf(listOf<Request>()) }
                         val Active = remember { mutableStateOf(false) }
+                        currentUser = SharedPreferences.GetCurrentUser()
 
                         lifecycleScope.launchWhenCreated {
 
                             roomViewModel.uiState.collect { uiState ->
-                                context.let{ roomViewModel.EmitRequestsById(it) }
+                                context.let{ roomViewModel.EmitRequestsById(it, currentUser.id.toString()) }
                                 when(uiState){
                                     is RoomViewModel.RequestByIdUiState.Success -> {
+                                        Log.e(TAG, "${uiState.requests}")
                                         if(uiState.requests != null){
-                                            List.value = uiState.requests!!
+                                            List.value = uiState.requests!!.asReversed()
                                             Active.value = true
-                                            /*for(i in uiState.requests){
-                                                ListRequest.add(i)
-                                                List.value = ListRequest
-
-                                                if(!ListRequest.isEmpty()) {
-
-                                                    Active.value = true
-
-                                                }
-                                            }*/
-                                            //ShowRequests(list = uiState.requests, context = context)
                                         }
                                     }
                                     is RoomViewModel.RequestByIdUiState.Error ->  Log.e(TAG, "${uiState.exception}")
                                 }
-
                             }
-
                         }
                         when (Active.value) {
                             true -> {
+                                if(!List.value.isEmpty()){
+                                    ShowRequests(list = List.value, context = context)
+                                }
+                                else{
+                                    Row(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        horizontalArrangement = Arrangement.Center)
+                                    {
+                                        Text(
+                                            modifier = Modifier.absolutePadding(top = 20.dp),
+                                            text = "There Are Not Requests",
+                                            fontSize = 22.sp,
+                                            fontWeight = FontWeight.Bold)
+                                    }
 
-                                 ShowRequests(list = List.value, context = context)
+                                }
                             }
                             false -> {
                                 CircularIndicator()

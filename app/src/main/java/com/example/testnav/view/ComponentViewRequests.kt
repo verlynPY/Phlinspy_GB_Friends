@@ -79,7 +79,7 @@ import com.example.testnav.model.Utils.OpenRequetAtivity
     fun CircularIndicator(){
         Column(modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally){
-            CircularProgressIndicator(color = MaterialTheme.colors.primary)
+            CircularProgressIndicator(color = MaterialTheme.colors.primary, strokeWidth = 1.dp)
         }
     }
 

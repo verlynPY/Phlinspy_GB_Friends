@@ -8,7 +8,6 @@ class App: Application() {
 
     companion object {
         private lateinit var instance: App
-
         fun getInstance(): App = instance
     }
 

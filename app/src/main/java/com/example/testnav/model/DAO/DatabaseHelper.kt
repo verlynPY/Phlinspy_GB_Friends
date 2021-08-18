@@ -8,11 +8,13 @@ interface DatabaseHelper {
 
     suspend fun getRequets(): List<Request>
 
-    suspend fun getRequestsById(): List<Request>
+    suspend fun getRequestsById(ID: String): List<Request>
 
     suspend fun updateStatusView(ID: String)
 
     suspend fun insertRequest(request: Request)
+
+    suspend fun removeRequest(request: Request)
 
 }
 

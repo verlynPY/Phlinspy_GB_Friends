@@ -26,6 +26,8 @@ import com.quickblox.chat.model.QBChatDialog
 import com.quickblox.chat.model.QBChatMessage
 import com.quickblox.core.QBEntityCallback
 import com.quickblox.core.exception.QBResponseException
+import com.quickblox.users.QBUsers
+import com.quickblox.users.model.QBUser
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 
@@ -43,6 +45,8 @@ class RoomViewModel: ViewModel() {
     private val _chatUiState = MutableStateFlow(ChatUiState.Success(null))
     val chatUiState: StateFlow<ChatUiState> = _chatUiState
 
+    val UserActive = MutableLiveData(false)
+
 
     fun AddRequest(request: Request, context: Context, view: View){
         viewModelScope.launch(Dispatchers.Main) {
@@ -53,6 +57,19 @@ class RoomViewModel: ViewModel() {
             }catch (e: Exception){
                 Log.e(TAG, "Error: $e")
                 MDialog.ToastSuccessfully(context, view, "Request: ${e.message}")
+            }
+        }
+    }
+
+    fun RemoveRequest(context: Context, request: Request){
+        viewModelScope.launch(Dispatchers.Main) {
+            try{
+                val dbHelper = DatabaseHelperImpl(DataBaseBuilder.getInstance(context))
+                val db = dbHelper.removeRequest(request)
+
+            }catch (e: Exception){
+                Log.e(TAG, "Error: $e")
+
             }
         }
     }
@@ -82,12 +99,13 @@ class RoomViewModel: ViewModel() {
 
 
 
-    fun EmitRequestsById(context: Context){
+    fun EmitRequestsById(context: Context, ID: String){
         viewModelScope.launch(Dispatchers.Main){
-            getRequestsById(context)
+            getRequestsById(context, ID)
                 .flowOn(Dispatchers.IO)
                 .collect { item ->
                     _uiState.value = RequestByIdUiState.Success(item)
+
                 }
         }
     }
@@ -96,9 +114,9 @@ class RoomViewModel: ViewModel() {
        return dialogHelper.GetDialogs()
     }
 
-    fun CreateDialog(UserId: Int){
+    fun CreateDialog(UserId: Int, request: Request, context: Context){
         try {
-            dialogHelper.CreateDialog(UserId)
+            dialogHelper.CreateDialog(UserId, request, context)
         }
         catch (e: Exception){
             Log.e(TAG, "$e")
@@ -121,6 +139,26 @@ class RoomViewModel: ViewModel() {
                     _chatUiState.value = ChatUiState.Success(item)
                 }
         }
+    }
+
+    fun GetUser(ID: Int){
+        QBUsers.getUser(ID).performAsync(object : QBEntityCallback<QBUser> {
+            override fun onSuccess(qbUser: QBUser?, bundle: Bundle?) {
+                Log.e(TAG, "$qbUser")
+
+                UserActive.value = true
+
+                //qbUser!!.password = currentUser.password
+                //qbUser.id = currentUser.id
+
+                //dialog.initForChat(QBChatService.getInstance())
+                //Login(qbUser!!)
+            }
+
+            override fun onError(e: QBResponseException?) {
+                Log.e(TAG, "$e")
+            }
+        })
     }
 
     fun ReadMessage(dialog: QBChatDialog): Flow<ArrayList<QBChatMessage>> = flow{
@@ -167,10 +205,10 @@ class RoomViewModel: ViewModel() {
         }
     }
 
-    private fun getRequestsById(context: Context) = flow{
+    private fun getRequestsById(context: Context, ID: String) = flow{
             try {
                 val dbHelper = DatabaseHelperImpl(DataBaseBuilder.getInstance(context))
-                val db = dbHelper.getRequestsById()
+                val db = dbHelper.getRequestsById(ID)
                 emit(db)
                 Log.e(TAG, "Requesttt IDDDDDD: $db")
             } catch (e: Exception) {

@@ -27,6 +27,7 @@ import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.setContent
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import com.example.testnav.MaterialThemee
 import com.example.testnav.model.Preferences.SharedPreferences
@@ -45,33 +46,59 @@ import org.jivesoftware.smackx.muc.DiscussionHistory
 class ChatActivity : ComponentActivity() {
 
     private val viewModel: RoomViewModel by viewModels()
-    private var currentUser = QBUser()
+    var currentUser = QBUser()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
+
             Column(modifier =
             Modifier.fillMaxSize(),
                 verticalArrangement = Arrangement.Bottom
             ) {
+
                 var List = ArrayList<QBChatMessage>()
                 val Active = remember { mutableStateOf(false) }
 
+                val UserActive = remember { mutableStateOf(false) }
 
                 currentUser = SharedPreferences.GetCurrentUser()
-                Log.e(TAG, "$currentUser")
 
-                QBUsers.getUser(currentUser.id).performAsync(object : QBEntityCallback<QBUser> {
+                val bundle = intent.extras
+                val gson = Gson()
+                val personJsonString = bundle!!.getString("DIALOG")
+                val dialog = gson.fromJson(personJsonString, QBChatDialog::class.java)
+                viewModel.GetUser(currentUser.id)
+                viewModel.UserActive.observe(this@ChatActivity, Observer {
+                    UserActive.value = it
+                })
+
+                lifecycleScope.launchWhenCreated {
+                    viewModel.EmitChat(dialog)
+                    viewModel.chatUiState.collect { chatUiState ->
+                        when(chatUiState){
+                            is RoomViewModel.ChatUiState.Success -> {
+                                if(chatUiState.dialog != null){
+                                    Active.value = true
+                                    List = chatUiState.dialog!!
+
+                                }
+
+                            }
+                            is RoomViewModel.ChatUiState.Error -> {
+                                Log.e(TAG, "ChatUiState Error")
+                            }
+                        }
+                    }
+                }
+
+                /*QBUsers.getUser(currentUser.id).performAsync(object : QBEntityCallback<QBUser> {
                     override fun onSuccess(qbUser: QBUser?, bundle: Bundle?) {
                         Log.e(TAG, "$qbUser")
 
                         qbUser!!.password = currentUser.password
                         qbUser.id = currentUser.id
-                        val bundle = intent.extras
-                        val gson = Gson()
-                        val personJsonString = bundle!!.getString("DIALOG")
-                        //val dialog = Utils.getGsonParser()!!.fromJson(personJsonString, QBChatDialog::class.java)
-                        val dialog = gson.fromJson(personJsonString, QBChatDialog::class.java)
+
 
                         //dialog.initForChat(QBChatService.getInstance())
 
@@ -82,8 +109,9 @@ class ChatActivity : ComponentActivity() {
                         when(chatUiState){
                             is RoomViewModel.ChatUiState.Success -> {
                                 if(chatUiState.dialog != null){
-                                    List = chatUiState.dialog!!
                                     Active.value = true
+                                    List = chatUiState.dialog!!
+
                                 }
 
                             }
@@ -100,7 +128,7 @@ class ChatActivity : ComponentActivity() {
                     override fun onError(e: QBResponseException?) {
                         Log.e(TAG, "$e")
                     }
-                })
+                })*/
 
                 //val chatService = QBChatService.getInstance()
                 //val isLoggedIn = chatService.isLoggedIn
@@ -110,10 +138,25 @@ class ChatActivity : ComponentActivity() {
                 //val dialog = DialogUtils.buildPrivateDialog(userId)
                 //var qbChatDialog = QBChatDialog()
 
+                if(Active.value){
+                    LazyColumn(){
+                itemsIndexed(items = List){ index, chat ->
+                    Column(modifier = Modifier.padding(top = 1.dp, start = 6.dp, bottom = 1.dp, end = 6.dp)) {
+                        Text(text = "${chat.body}")
 
-                
+                            ItemRigth(chat)
 
-                TextField()
+
+                    }
+                }
+            }
+                }
+
+                TextField(onClick = { val user = QBUser()
+                    user.id = 129897984
+                    user.password ="jgdughhgg"
+                    Login(user) })
+
 
             }
             /*LazyColumn(){
@@ -131,6 +174,11 @@ class ChatActivity : ComponentActivity() {
                 }
             }*/
         }
+    }
+
+
+    fun Toast(){
+        Toast.makeText(applicationContext, "Funciona", Toast.LENGTH_SHORT).show()
     }
 
     fun Login(user: QBUser){
@@ -161,69 +209,22 @@ class ChatActivity : ComponentActivity() {
         history.maxStanzas = 0
         //SendMessage(dialog, "Message Sent")
         //ReadMessage(dialog)
-        viewModel.SendMessage(dialog, "Message Sentt")
+        viewModel.SendMessage(dialog, "Message Test")
 
         dialog.join(history, object : QBEntityCallback<Void> {
             override fun onSuccess(o: Void?, bundle: Bundle?) {
                 Log.e(ContentValues.TAG, "Join Good")
                 //viewModel.SendMessage(dialog, "Texto")
-
             }
-
             override fun onError(e: QBResponseException?) {
                 Log.e(ContentValues.TAG, "Join Error: ${e!!.message}")
             }
         })
-
-
-
-    }
-
-}
-
-
-
-
-@Composable
-fun ItemRigth(chat: QBChatMessage){
-    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End){
-        Box(modifier = Modifier
-            .wrapContentSize()
-            .padding(2.dp)
-            .clip(shape = RoundedCornerShape(18.dp))
-            .background(MaterialThemee.yellow_Mostash)
-        ){
-            Row() {
-                Text(text = "Messag Sent", fontSize = 16.sp, modifier = Modifier.padding(10.dp))
-            }
-        }
-
-
     }
 }
 
-
-
 @Composable
-fun ItemLeft(chat: QBChatMessage){
-    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Start) {
-        Box(modifier = Modifier
-            .wrapContentSize()
-            .padding(2.dp)
-            .clip(shape = RoundedCornerShape(18.dp))
-            .background(Color(100,100,100,50))
-        ) {
-
-            Row() {
-                Text(text = "Message Received", fontSize = 16.sp, modifier = Modifier.padding(10.dp))
-            }
-        }
-    }
-}
-
-
-@Composable
-fun TextField(){
+fun TextField(onClick: () -> Unit){
     Column {
         var messageText = remember { mutableStateOf("")}
         Row(modifier = Modifier.fillMaxWidth()) {
@@ -252,9 +253,51 @@ fun TextField(){
                 contentAlignment = Alignment.Center
 
             ) {
-                Icon(Icons.Default.Send, Modifier.size(30.dp), tint = MaterialThemee.yellow_Mostash)
+                IconButton(onClick = onClick) {
+                    Icon(
+                        Icons.Default.Send,
+                        Modifier.size(30.dp),
+                        tint = MaterialThemee.yellow_Mostash
+                    )
+                }
             }
             //}
+        }
+    }
+}
+
+@Composable
+fun ItemRigth(chat: QBChatMessage){
+    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End){
+        Box(modifier = Modifier
+            .wrapContentSize()
+            .padding(2.dp)
+            .clip(shape = RoundedCornerShape(18.dp))
+            .background(MaterialThemee.yellow_Mostash)
+        ){
+            Row() {
+                Text(text = "Messag Sent", fontSize = 16.sp, modifier = Modifier.padding(10.dp))
+            }
+        }
+
+
+    }
+}
+
+
+@Composable
+fun ItemLeft(chat: QBChatMessage){
+    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Start) {
+        Box(modifier = Modifier
+            .wrapContentSize()
+            .padding(2.dp)
+            .clip(shape = RoundedCornerShape(18.dp))
+            .background(Color(100,100,100,50))
+        ) {
+
+            Row() {
+                Text(text = "Message Received", fontSize = 16.sp, modifier = Modifier.padding(10.dp))
+            }
         }
     }
 }

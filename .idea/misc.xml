@@ -4,6 +4,10 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="..\:/Users/verlyn/AndroidStudioProjects/PhlinpsyGBFriends-master/app/src/main/res/drawable/bg_dialog_succeffuly.xml" value="0.20260416666666667" />
+        <entry key="..\:/Users/verlyn/AndroidStudioProjects/PhlinpsyGBFriends-master/app/src/main/res/drawable/bg_itemnav_selected.xml" value="0.20260416666666667" />
+        <entry key="..\:/Users/verlyn/AndroidStudioProjects/PhlinpsyGBFriends-master/app/src/main/res/drawable/bg_itemnav_selector.xml" value="0.20260416666666667" />
+        <entry key="..\:/Users/verlyn/AndroidStudioProjects/PhlinpsyGBFriends-master/app/src/main/res/drawable/bg_nav_normal.xml" value="0.20260416666666667" />
+        <entry key="..\:/Users/verlyn/AndroidStudioProjects/PhlinpsyGBFriends-master/app/src/main/res/drawable/bg_radio_normal.xml" value="0.20260416666666667" />
         <entry key="..\:/Users/verlyn/AndroidStudioProjects/PhlinpsyGBFriends-master/app/src/main/res/drawable/bg_radio_selected.xml" value="0.20260416666666667" />
         <entry key="..\:/Users/verlyn/AndroidStudioProjects/PhlinpsyGBFriends-master/app/src/main/res/drawable/bg_radio_selector.xml" value="0.20260416666666667" />
         <entry key="..\:/Users/verlyn/AndroidStudioProjects/PhlinpsyGBFriends-master/app/src/main/res/drawable/bg_window.xml" value="0.20260416666666667" />

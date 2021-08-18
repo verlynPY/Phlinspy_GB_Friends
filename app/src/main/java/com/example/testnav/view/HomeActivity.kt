@@ -1,5 +1,6 @@
 package com.example.testnav.view
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -67,7 +68,7 @@ class HomeActivity : ComponentActivity() {
                     MaterialThemee.darkColor else MaterialThemee.lightColor
             ) {
                 ConstraintLayout(modifier = Modifier.background(MaterialTheme.colors.onBackground).fillMaxSize()) {
-                    HomeView(applicationContext)
+                    HomeView(applicationContext, this@HomeActivity)
                 }
             }
         }
@@ -76,7 +77,7 @@ class HomeActivity : ComponentActivity() {
 
 
     @Composable
-    fun HomeView(context: Context){
+    fun HomeView(context: Context, activity: Activity){
         Column(modifier = Modifier.fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally)
         {
@@ -127,6 +128,7 @@ class HomeActivity : ComponentActivity() {
                             val intent = Intent(context, LoginActivity::class.java)
                             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                             context.startActivity(intent)
+
                         },
                             modifier = buttomModifier,
                             shape = RoundedCornerShape(30.dp),
@@ -137,9 +139,11 @@ class HomeActivity : ComponentActivity() {
                         }
                         Spacer(modifier = Modifier.preferredWidth(10.dp))
                         Button(onClick = {
+
                             val intent = Intent(context, RegisterActivity::class.java)
                             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                             context.startActivity(intent)
+
                         },
                             modifier = buttomModifier,
                             shape = RoundedCornerShape(30.dp

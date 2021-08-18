@@ -47,6 +47,7 @@ import androidx.lifecycle.lifecycleScope
 import com.example.testnav.model.RegisterUser
 import com.example.testnav.model.SettingFilter
 import com.example.testnav.model.User
+import com.example.testnav.model.Utils.OpenHomeActivity
 import com.example.testnav.view.MainActivity
 import com.example.testnav.view.buttomModifier
 import com.example.testnav.viewmodel.MainViewModel
@@ -104,9 +105,12 @@ class RegisterActivity : AppCompatActivity() {
     @Composable
     fun Register(context: Context) {
         Column() {
+            val ActiveLinearProgress = remember { mutableStateOf(false) }
             Row() {
                 IconButton(onClick = {
+                    overridePendingTransition(0,0)
                     finish()
+                    overridePendingTransition(0,0)
                 }) {
                     Icon(vectorResource(R.drawable.ic_back), tint = MaterialThemee.yellow_Mostash)
                 }
@@ -233,6 +237,7 @@ class RegisterActivity : AppCompatActivity() {
                                     if (latitud!!.equals(0) || longitud!!.equals(0)) {
                                         println("Location cannot be finded")
                                     } else {
+                                        ActiveLinearProgress.value = true
                                         var user = User(
                                                 "12389423",
                                                 userName.value,
@@ -253,7 +258,7 @@ class RegisterActivity : AppCompatActivity() {
                                         qbUser.phone = user.NumberPhone.toString()
                                         qbUser.login = user.UserName
                                         //viewModel.SaveUsers(user)
-                                        viewModel.RegisterQuickBlox(qbUser, user, this@RegisterActivity)
+                                        viewModel.RegisterQuickBlox(qbUser, user, this@RegisterActivity, this@RegisterActivity)
                                     }
                                 }, colors = ButtonConstants.defaultButtonColors(backgroundColor = MaterialTheme.colors.secondary),
                             modifier = Modifier
@@ -324,6 +329,18 @@ class RegisterActivity : AppCompatActivity() {
                             }
                         }
                     }
+                }
+            }
+            Column(
+                modifier = Modifier.fillMaxHeight().fillMaxWidth(),
+                verticalArrangement = Arrangement.Bottom
+            ) {
+                if (ActiveLinearProgress.value) {
+                    LinearProgressIndicator(
+                        modifier = Modifier.fillMaxWidth(),
+                        color = MaterialThemee.yellow_Mostash,
+                        backgroundColor = Color.DarkGray
+                    )
                 }
             }
         }

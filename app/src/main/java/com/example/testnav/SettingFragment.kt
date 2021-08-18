@@ -5,9 +5,26 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Button
+import androidx.compose.material.ButtonConstants
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.fragment.app.viewModels
 import com.example.testnav.view.Profile
+import com.example.testnav.viewmodel.MainViewModel
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -24,6 +41,8 @@ class SettingFragment : Fragment() {
     private var param1: String? = null
     private var param2: String? = null
 
+    private val viewModel: MainViewModel by viewModels()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
@@ -36,7 +55,52 @@ class SettingFragment : Fragment() {
         // Inflate the layout for this fragment
         return ComposeView(requireContext()).apply {
             setContent {
+                MaterialTheme(
+                    colors = if (isSystemInDarkTheme())
+                        MaterialThemee.darkColor else MaterialThemee.lightColor
+                ) {
+                    //ConstraintLayout(modifier = Modifier.background(MaterialTheme.colors.onBackground)) {
 
+
+                        context.let {
+                            LogOut(onClick = {
+                                viewModel.LogOutQuickBlox(it)
+                                //activity?.finish()
+                            })
+
+                        }
+
+                    //}
+                }
+            }
+        }
+    }
+
+    @Composable
+    fun LogOut(onClick: () -> Unit){
+        Column(modifier = Modifier.fillMaxHeight(), verticalArrangement = Arrangement.Bottom) {
+            Row(
+                modifier = Modifier.fillMaxWidth()
+                    .absolutePadding(left = 20.dp, right = 20.dp, bottom = 125.dp)
+            )
+            {
+                Button(
+                    onClick = onClick,
+                    colors = ButtonConstants.defaultButtonColors(backgroundColor = MaterialTheme.colors.secondary),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .preferredHeight(60.dp)
+                        .clip(
+                            RoundedCornerShape(30.dp)
+                        )
+                ) {
+                    Text(
+                        text = "LogOut",
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.Red
+                    )
+                }
             }
         }
     }
